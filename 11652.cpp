@@ -7,9 +7,10 @@ using namespace std;
 
 bool cmp(const pair<long long, int> &a, const pair<long long, int> &b)
 {
-	if (a.second == b.second)
+	if (a.second != b.second)
+		return a.second > b.second;
+	else
 		return a.first < b.first;
-	return a.second > b.second;
 }
 
 int main(void)
