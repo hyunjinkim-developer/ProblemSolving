@@ -1,0 +1,17 @@
+# DFS (Depth-First Search)
+	- Use Stack 
+## Data structure for Nodes and Edges
+- Adjacency Matrix
+	- PROS:
+		Time efficient for accessing certain edges
+	- CONS: 
+		The more nodes(with sparse edges) memory loss, because save all possible edges between nodes
+- Adjacency List
+	- PROS:
+		- Memory efficient, save edges that exists
+		- Better when traveling every adjacent edges
+	- CONS:
+		Time inefficient, need more time to check whether certain edge exists, should run every edges
+
+# BFS (Breadth First Search)
+	- queue
