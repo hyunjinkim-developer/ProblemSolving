@@ -26,7 +26,7 @@ while q:
             q.append(next_node)
 
 flag = False
-for i in range(N + 1):
+for i in range(1, N + 1):
     if distance[i] == K:
         print(i)
         flag = True
