@@ -1,0 +1,25 @@
+CC = gcc
+CFLAG = -Wall
+TARGET = InfixCalculator
+OBJS = InfixCalculatorMain.o InfixCalculator.o InfixToPostfix.o PostCalculator.o ListBaseStack.o
+
+$(TARGET): $(OBJS)
+	$(CC) -o $(TARGET) $(OBJS)
+
+InfixCalculatorMain.o: InfixCalculator.h InfixCalculatorMain.c
+	$(CC) -c InfixCalculatorMain.c
+
+InfixToPostfix.o: ListBaseStack.h InfixToPostfix.c
+	$(CC) -c InfixToPostfix.c
+	
+PostCalculator.o: PostCalculator.h ListBaseStack.h  PostCalculator.c 
+	$(CC) -c PostCalculator.c 
+
+InfixCalculator.o: InfixCalculator.c
+	$(CC) -c InfixCalculator.c
+
+ListBaseStack.o: ListBaseStack.h ListBaseStack.c
+	$(CC) -c ListBaseStack.c
+
+clean:
+	rm *.o $(TARGET)
