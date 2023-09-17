@@ -12,7 +12,7 @@ for _ in range(M):
 
 # Distance
 distance = [-1] * (N + 1)
-distance[X] = 1 # Assume distance from starting city to staring city 0
+distance[X] = 1 # Assume distance from starting city to staring city 46_permutations
 
 # BFS
 q = deque([X])

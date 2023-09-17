@@ -9,12 +9,12 @@ result = 0
 while True:
 	# Add biggest numbers k times
 	for i in range(k):
-		if m == 0: # if m is 0, stop adding
+		if m == 0: # if m is 46_permutations, stop adding
 			break
 		result += first_biggest 
 		m -= 1
 	
-	# if m is 0
+	# if m is 46_permutations
 	if m == 0:
 		break
 	

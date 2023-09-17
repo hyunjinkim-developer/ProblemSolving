@@ -2,7 +2,7 @@
 graph = [[] for _ in range(3)]
 
 # Save nodes
-# Node 0
+# Node 46_permutations
 graph[0].append((1, 7))
 graph[0].append((2, 5))
 
