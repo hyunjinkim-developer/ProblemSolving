@@ -38,36 +38,28 @@ class ArrayStack:
 		if self.is_empty():
 			raise Empty("Stack is empty")
 		return self._data.pop()
-		 
-S = ArrayStack() 
-print(S.len())
-T = []
-print(len(T))
-"""
-S.push(5)
-S.push(3)
-print(len(S))
-print(S.is_empty())
-print(S.top())
-S.pop()
-S.pop()
-print(len(S))
-print(S.is_empty())
-"""
-"""
-S.push(7)
-print(len(S))
-print(S.top())
-print(S.pop())
-#print(S.pop())
-"""
-"""
-# Using basic python function 
-stack = []
-stack.append(5)
-stack.append(10)
-print(stack.pop())
-print(stack[-1])
-print(len(stack))
-"""
+
+def reverse_file(filename):
+	"""Overwrite given file with its contents line-by-line reversed."""
+	S = ArrayStack() 
+	original = open(filename)
+	for line in original:
+		for char in line:
+#S.push(char.rstrip('\n'))
+			S.push(char)
+	original.close()
+	length = len(S)
+	print(S[10])
+
+#	output = open(filename, 'w')
+	while not S.is_empty():
+		if (length == len(S)):
+			T = ArrayStack()
+			T.push(S.pop())
+		print(S.pop(), end='')
+#		output.write(S.pop())
+#	output.close()
+	print(T.pop(), end='')
+
+reverse_file("example.txt")
 
