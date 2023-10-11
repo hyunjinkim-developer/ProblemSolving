@@ -78,21 +78,6 @@ def get_input():
 
     return N, M, K, ground
 
-# Initialize attack sequence
-# 0 for towers that can be an attacker
-# -1 for towers that are already destroyed
-def initalization(ground):
-    attack_sequence = [[-1] * M for _ in range(N)]
-    for r in range(N):
-        for c in range(M):
-            # if the tower is destroyed
-            if ground[r][c] <= 0:
-                continue
-            attack_sequence[r][c] = 0
-
-    return attack_sequence
-
-
 # Select Attacker ===========================
 # Increase power
 def select_attacker(ground, attack_sequence):
@@ -158,7 +143,6 @@ def select_attacker(ground, attack_sequence):
     # Increase power of selected attacker
     ground[attacker[0]][attacker[1]] += (N + M)
 
-    # print("Selected attacker:", attacker, ground[attacker[0]][attacker[1]])
     return attacker, ground
 
 
@@ -170,71 +154,67 @@ def attack(attacker, ground, attack_sequence, attacked_loc):
         # Find towers with the biggest power:
         target = [N + 100, M + 100]
 
-        group_by_power = collections.defaultdict(list)
-        for r in range(N):
-            for c in range(M):
-                # 선정된 공격자는 자신을 제외한 가장 강한 포탑을 공격합니다.
-                if r == attacker[0] and c == attacker[1]: continue
-                # if the tower already destroyed
-                if ground[r][c] == 0: continue
-
-                current_power = ground[r][c]
-                group_by_power[current_power].append([r, c])
-        # 공격력이 가장 높은 포탑이 가장 강한 포탑입니다.
-        max_power = max(group_by_power)
-        target_candidates = group_by_power[max_power]
-
-        if len(target_candidates) == 1:
-            target = target_candidates[0]
-        # 만약 공격력이 가장 높은 포탑이 2개 이상이라면, 공격한지 가장 오래된 포탑이 가장 강한 포탑입니다.
-        else:
-            print(target_candidates)
-            print_matrix(attack_sequence, target_candidates)
-            min_turn = 2000  # 1 ≤ K ≤ 1,000
-            for candidate in target_candidates:
-                r, c = candidate[0], candidate[1]
-                # 만약 공격력이 가장 높은 포탑이 2개 이상이라면, 공격한지 가장 오래된 포탑이 가장 강한 포탑입니다.
-                if attack_sequence[r][c] < min_turn:
-                    min_turn = attack_sequence[r][c]
-                    target[0], target[1] = r, c
-                # 만약 그러한 포탑이 2개 이상이라면, 각 포탑 위치의 행과 열의 합이 가장 작은 포탑이 가장 강한 포탑입니다.
-                elif min_turn == attack_sequence[r][c]:
-                    print(r + c)
-                    if r + c < target[0] + target[1]:
-                        target[0], target[1] = r, c
-                    # 만약 그러한 포탑이 2개 이상이라면, 각 포탑 위치의 열 값이 가장 작은 포탑이 가장 강한 포탑입니다.
-                    elif r + c ==  target[0] + target[1]:
-                        if r < target[0]:
-                            target[0], target[1] = r, c
-            print_matrix(ground, [attacker, target])
-
-
-        # # Solution2: Timeout
-        # # 공격력이 가장 높은 포탑이 가장 강한 포탑입니다.
-        # # 만약 공격력이 가장 높은 포탑이 2개 이상이라면, 공격한지 가장 오래된 포탑이 가장 강한 포탑입니다.
-        # # 만약 그러한 포탑이 2개 이상이라면, 각 포탑 위치의 행과 열의 합이 가장 작은 포탑이 가장 강한 포탑입니다.
-        # # 만약 그러한 포탑이 2개 이상이라면, 각 포탑 위치의 열 값이 가장 작은 포탑이 가장 강한 포탑입니다.
-        # # Find towers with the biggest power:
-        # target = [-1, -1]
-        # max_power = -1000  # 0 <= power <= 5000
-        # for sum in range(0, N + M -1): # [0 -> (N - 1) + (M - 1)]
-        #     for c in range(0, M): # 열 값이 가장 작은 포탑부터 순회
-        #         r = sum - c
-        #
-        #         # Check whether r in range of ground
-        #         if not 0 <= r <= N - 1: continue
-        #         # Check whether the tower has already deestroyed
+        # group_by_power = collections.defaultdict(list)
+        # for r in range(N):
+        #     for c in range(M):
+        #         # 선정된 공격자는 자신을 제외한 가장 강한 포탑을 공격합니다.
+        #         if r == attacker[0] and c == attacker[1]: continue
+        #         # if the tower already destroyed
         #         if ground[r][c] == 0: continue
         #
-        #         # 공격력이 가장 높은 포탑이 가장 강한 포탑
-        #         if max_power < ground[r][c]:
+        #         current_power = ground[r][c]
+        #         group_by_power[current_power].append([r, c])
+        # # 공격력이 가장 높은 포탑이 가장 강한 포탑입니다.
+        # max_power = max(group_by_power)
+        # target_candidates = group_by_power[max_power]
+        #
+        # if len(target_candidates) == 1:
+        #     target = target_candidates[0]
+        # # 만약 공격력이 가장 높은 포탑이 2개 이상이라면, 공격한지 가장 오래된 포탑이 가장 강한 포탑입니다.
+        # else:
+        #     min_turn = 2000  # 1 ≤ K ≤ 1,000
+        #     for candidate in target_candidates:
+        #         r, c = candidate[0], candidate[1]
+        #         # 만약 공격력이 가장 높은 포탑이 2개 이상이라면, 공격한지 가장 오래된 포탑이 가장 강한 포탑입니다.
+        #         if attack_sequence[r][c] < min_turn:
+        #             min_turn = attack_sequence[r][c]
         #             target[0], target[1] = r, c
-        #             max_power = ground[r][c]
-        #         # 만약 공격력이 가장 높은 포탑이 2개 이상이라면, 공격한지 가장 오래된 포탑이 가장 강한 포탑
-        #         elif ground[r][c] == max_power and attack_sequence[r][c] < attack_sequence[target[0]][target[1]]:
-        #             target[0], target[1] = r, c
+        #         # 만약 그러한 포탑이 2개 이상이라면, 각 포탑 위치의 행과 열의 합이 가장 작은 포탑이 가장 강한 포탑입니다.
+        #         elif min_turn == attack_sequence[r][c]:
+        #             if r + c < target[0] + target[1]:
+        #                 target[0], target[1] = r, c
+        #             # 만약 그러한 포탑이 2개 이상이라면, 각 포탑 위치의 열 값이 가장 작은 포탑이 가장 강한 포탑입니다.
+        #             elif r + c ==  target[0] + target[1]:
+        #                 if r < target[0]:
+        #                     target[0], target[1] = r, c
 
-        print("Selected Target:", target, ground[target[0]][target[1]])
+
+        # Solution2: Timeout
+        # 공격력이 가장 높은 포탑이 가장 강한 포탑입니다.
+        # 만약 공격력이 가장 높은 포탑이 2개 이상이라면, 공격한지 가장 오래된 포탑이 가장 강한 포탑입니다.
+        # 만약 그러한 포탑이 2개 이상이라면, 각 포탑 위치의 행과 열의 합이 가장 작은 포탑이 가장 강한 포탑입니다.
+        # 만약 그러한 포탑이 2개 이상이라면, 각 포탑 위치의 열 값이 가장 작은 포탑이 가장 강한 포탑입니다.
+        # Find towers with the biggest power:
+        target = [-1, -1]
+        max_power = -1000  # 0 <= power <= 5000
+        for sum in range(0, N + M -1): # [0 -> (N - 1) + (M - 1)]
+            for c in range(0, M): # 열 값이 가장 작은 포탑부터 순회
+                r = sum - c
+
+                # Check whether r in range of ground
+                if not 0 <= r <= N - 1: continue
+                # Check whether the tower has already destroyed
+                if ground[r][c] == 0: continue
+                # 선정된 공격자는 자신을 제외한 가장 강한 포탑을 공격합니다.
+                if r == attacker[0] and c == attacker[1]: continue
+
+                # 공격력이 가장 높은 포탑이 가장 강한 포탑
+                if max_power < ground[r][c]:
+                    target[0], target[1] = r, c
+                    max_power = ground[r][c]
+                # 만약 공격력이 가장 높은 포탑이 2개 이상이라면, 공격한지 가장 오래된 포탑이 가장 강한 포탑
+                elif ground[r][c] == max_power and attack_sequence[r][c] < attack_sequence[target[0]][target[1]]:
+                    target[0], target[1] = r, c
 
         return target
 
@@ -320,11 +300,6 @@ def attack(attacker, ground, attack_sequence, attacked_loc):
         if attackable:
             ground, attacked_loc = razor_attack(attacker, target, ground, backtrack_r, backtrack_c, attacked_loc)
 
-            # print("razor ground: ", "="*30)
-            # print_matrix(ground)
-            # print_matrix(attacked_loc)
-
-
         return attackable, ground, attacked_loc
 
 
@@ -352,20 +327,12 @@ def attack(attacker, ground, attack_sequence, attacked_loc):
                 ground[nr][nc] = max(ground[nr][nc] - surrounding_attack_power, 0)
                 attacked_loc[nr][nc] = True
 
-        # print("Bomb ground:", "-"*40)
-        # print_matrix(ground)
-        # print_matrix(attacked_loc)
-
         return ground, attacked_loc
 
 
     # Outer function start -------------------------------
     # Find target
     target = select_target(attacker, ground, attack_sequence)
-
-    # # Debug
-    # print("after find target")
-    # print_matrix(ground, [attacker, target])
 
     # if razor attack is not available, go for bomb attack
     razor_attack_available, ground, attacked_loc = run_razor_attack(attacker, target, ground, attacked_loc)
@@ -384,9 +351,6 @@ def reconstruct(ground, attacked_loc):
             if ground[r][c] != 0 and attacked_loc[r][c] == False:
                 ground[r][c] += 1
 
-    # print("reconstruct:")
-    # print_matrix(ground)
-
     return ground
 
 def count_not_destroyed(ground):
@@ -396,7 +360,6 @@ def count_not_destroyed(ground):
             if ground[r][c] != 0:
                 count += 1
 
-    # print("print not destroyed:", count)
     return count
 
 def find_max_power(ground):
@@ -406,18 +369,12 @@ def find_max_power(ground):
             max_power = max(max_power, ground[r][c])
     return max_power
 
-def solution():
-    global N, M, K
-
-    # Get input
-    N, M, K, ground = get_input()
-
-    # Initalization: can be attacker only when the tower is not destroyed
-    attack_sequence = initalization(ground)
+def solution(ground):
+    # 모든 포탑은 시점 0에 모두 공격한 경험이 있다고 가정하겠습니다.
+    attack_sequence = [[0] * M for _ in range(N)]
 
     # For every second
     for sec in range(1, K + 1):
-        # print(f"{sec} second", "-"*10)
 
         # Initialize attacked location
         # Save attacked locations for reconstruction
@@ -441,11 +398,7 @@ def solution():
 
         # 부서지지 않은 포탑이 1개가 된다면 그 즉시 중지
         if count_not_destroyed(ground) == 1:
-            # print("Instant Stop!")
             break
-
-        # if sec == 2:
-        #     break
 
     # Answer
     return find_max_power(ground)
@@ -454,11 +407,14 @@ def solution():
 T = int(input())
 # 여러개의 테스트 케이스가 주어지므로, 각각을 처리합니다.
 for test_case in range(1, T + 1):
-    # if test_case == 3:
-    #     break
-    print(f"testcase: {test_case}", "="*15)
 
     # ///////////////////////////////////////////////////////////////////////////////////
-    print(solution())
+    global N, M, K
+
+    # Get input
+    N, M, K, ground = get_input()
+
+    # Solution
+    print(solution(ground))
     # ///////////////////////////////////////////////////////////////////////////////////
 

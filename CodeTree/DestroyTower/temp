@@ -1,0 +1,26 @@
+        # Solution2: Timeout
+        # 공격력이 가장 높은 포탑이 가장 강한 포탑입니다.
+        # 만약 공격력이 가장 높은 포탑이 2개 이상이라면, 공격한지 가장 오래된 포탑이 가장 강한 포탑입니다.
+        # 만약 그러한 포탑이 2개 이상이라면, 각 포탑 위치의 행과 열의 합이 가장 작은 포탑이 가장 강한 포탑입니다.
+        # 만약 그러한 포탑이 2개 이상이라면, 각 포탑 위치의 열 값이 가장 작은 포탑이 가장 강한 포탑입니다.
+        # Find towers with the biggest power:
+        target = [-1, -1]
+        max_power = -1000  # 0 <= power <= 5000
+        for sum in range(0, N + M -1): # [0 -> (N - 1) + (M - 1)]
+            for c in range(0, M): # 열 값이 가장 작은 포탑부터 순회
+                r = sum - c
+
+                # Check whether r in range of ground
+                if not 0 <= r <= N - 1: continue
+                # Check whether the tower has already destroyed
+                if ground[r][c] == 0: continue
+                # 선정된 공격자는 자신을 제외한 가장 강한 포탑을 공격합니다.
+                if r == attacker[0] and c == attacker[1]: continue
+
+                # 공격력이 가장 높은 포탑이 가장 강한 포탑
+                if max_power < ground[r][c]:
+                    target[0], target[1] = r, c
+                    max_power = ground[r][c]
+                # 만약 공격력이 가장 높은 포탑이 2개 이상이라면, 공격한지 가장 오래된 포탑이 가장 강한 포탑
+                elif ground[r][c] == max_power and attack_sequence[r][c] < attack_sequence[target[0]][target[1]]:
+                    target[0], target[1] = r, c
