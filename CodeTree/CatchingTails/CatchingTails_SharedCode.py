@@ -102,7 +102,7 @@ def throw_ball(round):
         r1, c1 = (3 * N - 1) - round, N - 1
         r2, c2 = (3 * N - 1) - round, -1
     else: # r: [0, N - 1] , c: (4 * N - 1) - round
-        r1, c1 = 0, (4 * N - 1) - roundg
+        r1, c1 = 0, (4 * N - 1) - round
         r2, c2 = N, (4 * N - 1) - round
 
     # (r1, c1)에서 시작, (r2, c2) 방향으로 공 던지기

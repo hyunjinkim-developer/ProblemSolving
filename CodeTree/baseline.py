@@ -37,8 +37,9 @@ print(f)                                문자열 1개 출력하는 예제
 
       단, 채점을 위해 코드를 제출하실 때에는 반드시 아래 구문을 지우거나 주석 처리 하셔야 합니다.
 '''
-#import sys
-#sys.stdin = open("input.txt", "r")
+# # Comment below before submission
+# import sys
+# sys.stdin = open("input.txt", "r")
 
 T = int(input())
 # 여러개의 테스트 케이스가 주어지므로, 각각을 처리합니다.
