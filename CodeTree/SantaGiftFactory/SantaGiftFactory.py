@@ -46,7 +46,7 @@ def build_factory(command):
     boxes_per_belt = N // M
     idx = 0
     for belt_idx in range(M):
-        # belt = collections.deque(boxes[idx: idx + boxes_per_belt])
+        # belt = collections.deque(boxes[idx: idx + boxes_per_belt]) # When not using belts_dict
         belt = collections.deque()
         for box in boxes[idx: idx + boxes_per_belt]:
             id, weight = box
@@ -76,7 +76,7 @@ def unload_box(w_max):
         # 그렇지 않다면 해당 선물을 벨트 맨 뒤로 보냅니다.
         else:
             box = belt[0]
-            # del belt[0] # same as.popleft()
+            # del belt[0] # same as.popleft() # the same as the code above
             belt.popleft()
             belt.append(box)
 
@@ -102,9 +102,6 @@ def remove_box(r_id):
 
     return print(-1)
 
-# Start from here!
-# belts_dict update in find_box()/ damage_belt()
-
 def find_box(f_id):
     # 상자가 놓여있는 벨트가 있다면 해당 벨트의 번호를 출력하고,
     if f_id in belts_dict:
@@ -129,29 +126,10 @@ def find_box(f_id):
     else:
         return print(-1)
 
-    # for belt_idx, belt in enumerate(belts):
-    #     move_front = list()
-    #     not_moving = list()
-    #     for box_idx, box in enumerate(belt):
-    #         id, weight = box
-    #
-    #         if id == f_id:
-    #
-    #             belt_list = list(belt)
-    #             not_moving = belt_list[:box_idx]
-    #             move_front = belt_list[box_idx:]
-    #             move_front.extend(not_moving)
-    #             belts[belt_idx] = collections.deque(move_front)
-    #
-    #             # 벨트의 번호를 출력
-    #             return print(belt_idx + 1)  # belt number starts from 1
-    #
-
-
 def damage_belt(b_num):
-    b_num_idx = b_num - 1
+    belt_idx = b_num - 1
     # b_num 벨트가 이미 망가져 있었다면 -1을 출력
-    if len(belts[b_num_idx]) == 0:
+    if len(belts[belt_idx]) == 0:
         print(-1)
         return
     # b_num 벨트가 망가져 있지 않았다면
@@ -163,22 +141,24 @@ def damage_belt(b_num):
         # 옮길 벨트 찾기
         new_belt_idx = -1
         for i in range(1, M):
-            new_belt_idx = (b_num_idx + i) % M
+            new_belt_idx = (belt_idx + i) % M
             if len(belts[new_belt_idx]) != 0:
                 break
 
-
-        # belts[new_belt_idx].extend(belts[b_num_idx])
-        for box in belts[b_num_idx]:
+        # Move gifts to new_belt_idx
+        # belts[new_belt_idx].extend(belts[b_num_idx]) # when not using belts_dict
+        for box in belts[belt_idx]:
             id, weight = box
             belts[new_belt_idx].append(box)
             # Update belt index
             belts_dict[id] = new_belt_idx
-        belts[b_num_idx] = collections.deque()
+        belts[belt_idx] = collections.deque()
 
         # 그렇지 않았다면 정상적으로 고장을 처리했다는 뜻으로 b_num 값을 출력
         print(b_num)
         return
+
+
 
 
 '''
@@ -205,8 +185,6 @@ T = int(input())
 for test_case in range(1, T + 1):
     # ///////////////////////////////////////////////////////////////////////////////////
     # print(f"test case:{test_case}", "="*15)
-    # if test_case == 2:
-    #     break
 
     global Q, N, M
     global belts, belts_dict
@@ -239,9 +217,4 @@ for test_case in range(1, T + 1):
             b_num = command[1]
             # print(f"damage_belt: {b_num}", "-"*5)
             damage_belt(b_num)
-
-        # print_belts()
-        # print(belts_dict)
-        # if i == 6:
-        #     break
     # ///////////////////////////////////////////////////////////////////////////////////
