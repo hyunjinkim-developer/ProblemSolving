@@ -78,7 +78,7 @@ def build_factory(command):
             gifts_dict[id].append(weight)
             # Save prev_id
             gifts_dict[id].append(prev_id)
-            # Save next_id ! 더 나은 방법?
+            # Save next_id
             if gift_idx == boxes_per_belt - 1:
                 gifts_dict[id].append(-1)
             else:
