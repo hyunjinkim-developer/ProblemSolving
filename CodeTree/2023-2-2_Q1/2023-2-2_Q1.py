@@ -27,19 +27,28 @@ N, M, P, C, D = -1, -1, -1, -1, -1
 ground = list()
 Rudolph = (-1, -1)
 Santas = dict()
-freeze = dict()
+freeze = list()
 
 def print_matrix(matrix):
-    for i in range(N):
-        print(matrix[i][:N])
+    global Rudolph
+    rudolph_r, rudolph_c = Rudolph
+
+    for r in range(N):
+        for c in range(N):
+            if r == rudolph_r - 1 and c == rudolph_c - 1:
+                print("*", end=" ")
+            else:
+                print(matrix[r][c], end=" ")
+        print()
 
 def get_input():
     global N, M, P, C, D
-    global ground, Rudolph, Santas
+    global ground, Rudolph, Santas, freeze
 
     # ground size, turns, the number of santas, power of the rudolph, power of santas
     N, M, P, C, D = map(int, input().split())
     ground = [[0] * N for _ in range(N)]
+    freeze = [0 for _ in range(P + 1)]
 
     # Initial location of Rudolph
     Rudolph = tuple(map(int, input().split()))
@@ -58,11 +67,12 @@ def find_target_santa():
     global Santas, Rudolph
 
     availables = dict()
-    for idx, (x, y, score) in Santas.items():
+    for idx in range(1, P + 1):
+        r, c, score = Santas[idx]
         # 게임에서 탈락하지 않은 산타 중 가장 가까운 산타를 선택해야 합니다.
-        if x == -1 and y == -1: continue
+        if r == -1 and c == -1: continue
 
-        availables[idx] = (find_distance((x, y), Rudolph), x, y)
+        availables[idx] = (find_distance((r, c), Rudolph), r, c)
     # 루돌프는 가장 가까운 산타를 향해 1칸 돌진합니다.
     # 만약 가장 가까운 산타가 2명 이상이라면, r 좌표가 큰 산타를 향해 돌진합니다.
     # r이 동일한 경우, c 좌표가 큰 산타를 향해 돌진합니다.
@@ -93,17 +103,50 @@ def find_rudolph_next_move(santa_location):
     return (next_r, next_c)
 
 def rudolph_move():
-    global Rudolph
+    global Rudolph, ground, Santas, C, freeze
 
     # Find target santa
     target = find_target_santa()
 
     # Find next rudolph locaion
     next_rudolph_location = find_rudolph_next_move(target)
+
+    # 루돌프는 기절한 산타를 돌진 대상으로 선택할 수 있습니다.
+    # 루돌프가 움직여서 충돌이 일어난 경우,
+    if target == next_rudolph_location:
+        # 해당 산타는 C만큼의 점수를 얻게 됩니다.
+        target_r, target_c = target
+        target_santa_id = ground[target_r - 1][target_c - 1]
+        _, _, score = Santas[target_santa_id]
+        score += C
+        # 이와 동시에 산타는 루돌프가 이동해온 방향으로 C 칸 만큼 밀려나게 됩니다.
+        rudolph_r, rudolph_c = Rudolph
+        diff_r, diff_c = target_r - rudolph_r, target_c - rudolph_c
+        new_r, new_c = target_r + (diff_r * C), target_c + (diff_c * C)
+        if not in_range(new_r, new_c):
+            new_r, new_c = -1, -1
+        else:
+            # 산타는 충돌 후 착지하게 되는 칸에 다른 산타가 있다면 그 산타는 1칸 해당 방향으로 밀려나게 됩니다.
+            # 그 옆에 산타가 있다면 연쇄적으로 1칸씩 밀려나는 것을 반복하게 됩니다.
+            # 게임판 밖으로 밀려나오게 된 산타의 경우 게임에서 탈락됩니다.
+            if ground[new_r - 1][new_c - 1] != 0:
+                santa_id = ground[new_r - 1][new_c - 1]
+                interaction(santa_id, (new_r, new_c), (diff_r, diff_c))
+
+        # Update ground, Santas
+        ground[target_r - 1][target_c - 1] = 0
+        if not (new_r == -1 and new_c == -1):
+            ground[new_r - 1][new_c - 1] = target_santa_id
+        Santas[target_santa_id] = (new_r, new_c, score)
+        # 산타는 루돌프와의 충돌 후 기절을 하게 됩니다. 현재가 k번째 턴이었다면,
+        # (k+1)번째 턴까지 기절하게 되어 (k+2)번째 턴부터 다시 정상상태가 됩니다.
+        # 주의!
+        # 산타가 연속해서 루돌프와 충돌하더라도
+        # 마지막 충돌이 k번째 턴이었다면, (k+1)번째 턴까지 기절하게 되어 (k+2)번째 턴부터 다시 정상상태가 됩니다.
+        freeze[target_santa_id] = 2
+
     Rudolph = next_rudolph_location
 
-    # 루돌프가 움직여서 충돌이 일어난 경우, 해당 산타는 C만큼의 점수를 얻게 됩니다.
-    # 이와 동시에 산타는 루돌프가 이동해온 방향으로 C 칸 만큼 밀려나게 됩니다.
 
 def in_range(r, c):
     global N
@@ -127,9 +170,9 @@ def find_santa_next_move(r, c):
         new_distance = find_distance((nr, nc), Rudolph)
         if new_distance > current_distance_to_rudolph: continue
 
-        # 움직일 수 있는 칸이 없다면 산타는 움직이지 않습니다.
         availables.append([new_distance, idx, nr, nc])
 
+    # 움직일 수 있는 칸이 없다면 산타는 움직이지 않습니다.
     if len(availables) == 0:
         return (r, c)
     else:
@@ -140,19 +183,44 @@ def find_santa_next_move(r, c):
         new_r, new_c = sort_availables[0][2], sort_availables[0][3]
         return (new_r, new_c)
 
+def interaction(santa_id, location, direction):
+    global ground, Santas, D
+
+    cur_r, cur_c = location
+    dir_r, dir_c = direction
+    new_r, new_c = cur_r + dir_r, cur_c + dir_c
+    _, _, score = Santas[santa_id]
+
+    if not in_range(new_r, new_c):
+        ground[cur_r - 1][cur_c - 1] = 0
+        Santas[santa_id] = (-1, -1, score)
+        return
+
+    # 산타는 충돌 후 착지하게 되는 칸에 다른 산타가 있다면 그 산타는 1칸 해당 방향으로 밀려나게 됩니다.
+    # 그 옆에 산타가 있다면 연쇄적으로 1칸씩 밀려나는 것을 반복하게 됩니다.
+    # 게임판 밖으로 밀려나오게 된 산타의 경우 게임에서 탈락됩니다.
+    if ground[new_r - 1][new_c - 1] != 0:
+        interaction(ground[new_r - 1][new_c - 1],  (new_r, new_c), (dir_r, dir_c))
+
+    ground[new_r - 1][new_c - 1] = santa_id
+    Santas[santa_id] = (new_r, new_c, score)
+
+
 def santas_move():
-    global Santas, D, Rudolph, ground
+    global P, Santas, D, Rudolph, ground, freeze
     rudolph_r, rudolph_c = Rudolph
 
-    for idx, (r, c, score) in Santas.items():
+    # 산타는 1번부터 P번까지 순서대로 움직입니다.
+    for idx in range(1, P + 1):
+        r, c, score = Santas[idx]
         # 기절했거나 이미 게임에서 탈락한 산타는 움직일 수 없습니다.
         if r == -1 and c == -1: continue
-        if idx in freeze.keys(): continue
+        if freeze[idx] != 0: continue
 
         # Find sanda's new location
+        ground[r - 1][c - 1] = 0
         new_r, new_c = find_santa_next_move(r, c)
 
-        # Collide with Rudolph
         # 산타와 루돌프가 같은 칸에 있게 되면 충돌이 발생합니다.
         if new_r == rudolph_r and new_c == rudolph_c:
             # 산타가 움직여서 충돌이 일어난 경우, 해당 산타는 D만큼의 점수를 얻게 됩니다.
@@ -163,20 +231,22 @@ def santas_move():
             # 만약 밀려난 위치가 게임판 밖이라면 산타는 게임에서 탈락됩니다.
             if not in_range(new_r, new_c):
                 new_r, new_c = -1, -1
-            # 만약 밀려난 칸에 다른 산타가 있는 경우 상호작용이 발생합니다.
+            else:
+                # 만약 밀려난 칸에 다른 산타가 있는 경우 상호작용이 발생합니다.
+                if ground[new_r - 1][new_c - 1] != 0:
+                    santa_id = ground[new_r - 1][new_c - 1]
+                    interaction(santa_id, (new_r, new_c), (diff_r, diff_c))
+            # 산타는 루돌프와의 충돌 후 기절을 하게 됩니다.
+            # 현재가 k번째 턴이었다면, (k+1)번째 턴까지 기절하게 되어 (k+2)번째 턴부터 다시 정상상태가 됩니다.
+            # 주의!
+            # 산타가 연속해서 루돌프와 충돌하더라도
+            # 마지막 충돌이 k번째 턴이었다면, (k+1)번째 턴까지 기절하게 되어 (k+2)번째 턴부터 다시 정상상태가 됩니다.
+            freeze[idx] = 2
 
         # Update Santas and ground
-        ground[r - 1][c - 1] = 0
         if not (new_r == -1 and new_c == -1):
             ground[new_r -1][new_c - 1] = idx
         Santas[idx] = (new_r, new_c, score)
-
-    print(Santas)
-
-
-
-
-
 
 
 
@@ -190,40 +260,43 @@ T = int(input())
 # 여러개의 테스트 케이스가 주어지므로, 각각을 처리합니다.
 for test_case in range(1, T + 1):
     # ///////////////////////////////////////////////////////////////////////////////////
-    if test_case == 2:
-        break
-    print(f"test case: {test_case}")
-
     # get input
     get_input()
 
     for turn in range(1, M + 1):
-        if turn == 2:
-            break
-        print(f"turn: {turn}")
 
+        # 루돌프가 한 번 움직인 뒤,
         rudolph_move()
-        print_matrix(ground)
-        print(Rudolph)
-
+        # 1번 산타부터 P번 산타까지 순서대로 움직이게 됩니다.
         santas_move()
+
         # 만약 P 명의 산타가 모두 게임에서 탈락하게 된다면 그 즉시 게임이 종료됩니다.
         # 매 턴 이후 아직 탈락하지 않은 산타들에게는 1점씩을 추가로 부여합니다.
-        alive = 0
-        for idx, (r, c, score) in Santas.items():
+        dead = 0
+        for idx in range(1, P + 1):
+            r, c, score = Santas[idx]
             # 탈락한 산타들
-            if r == -1 and c == -1: continue
-            alive += 1
+            if r == -1 and c == -1:
+                dead += 1
+                continue
             score += 1
             Santas[idx] = (r, c, score)
-        if alive == len(Santas):
+        if dead == len(Santas):
             break
-        print_matrix(ground)
-        print(Santas)
-        print(freeze)
+        # unfreeze
+        # 산타는 루돌프와의 충돌 후 기절을 하게 됩니다.
+        # 현재가 k번째 턴이었다면, (k+1)번째 턴까지 기절하게 되어 (k+2)번째 턴부터 다시 정상상태가 됩니다.
+        # 주의!
+        # 산타가 연속해서 루돌프와 충돌하더라도
+        # 마지막 충돌이 k번째 턴이었다면, (k+1)번째 턴까지 기절하게 되어 (k+2)번째 턴부터 다시 정상상태가 됩니다.
+        for i in range(P + 1):
+            if freeze[i] != 0:
+                freeze[i] -= 1
 
     # 게임이 끝났을 때 각 산타가 얻은 최종 점수를 1번부터 P번까지 순서대로 공백을 사이에 두고 출력합니다.
-    for idx, (r, c, score) in Santas.items():
+    for idx in range(1, P + 1):
+        _, _, score = Santas[idx]
         print(score, end=" ")
+    print()
 
     # ///////////////////////////////////////////////////////////////////////////////////
