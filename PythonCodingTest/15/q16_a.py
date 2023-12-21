@@ -6,7 +6,7 @@ temp = [[0] * m for _ in range(n)] # Map after walls installed
 for _ in range(n):
     data.append(list(map(int, input().split())))
 
-# 4 direction
+# 4_Simulation direction
 dx = [-1, 0, 1, 0]
 dy = [0, 1, 0, -1]
 
