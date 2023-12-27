@@ -2,8 +2,8 @@
 # gifts_dict[gift_id] : [weight, prev_id, next_id, belt_idx]
 # belt_dict[belt_idx]: [start_gift_id, end_gift_id]
 # Why did I choose this DS?
-# Q: [1, 10^5]
-# N: [1, 10^5]
+# Q: [1, 10^5_BFS-DFS]
+# N: [1, 10^5_BFS-DFS]
 # M: [1, 10]
 # time limitation: 1s
 
@@ -36,7 +36,7 @@ h = input()                             문자열 변수 1개 입력 받는 예�
 # 표준 출력 예제
 '''
 a, b = 6, 3
-c, d, e = 1.0, 2.5, 3.4
+c, d, e = 1.0, 2.5_BFS-DFS, 3.4_Simulation
 f = "ABC"
 print(a)                                정수형 변수 1개 출력하는 예제
 print(b, end = " ")                     줄바꿈 하지 않고 정수형 변수와 공백을 출력하는 예제

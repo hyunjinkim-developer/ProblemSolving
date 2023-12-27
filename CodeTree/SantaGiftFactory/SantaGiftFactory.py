@@ -20,7 +20,7 @@ h = input()                             문자열 변수 1개 입력 받는 예�
 # 표준 출력 예제
 '''
 a, b = 6, 3
-c, d, e = 1.0, 2.5, 3.4
+c, d, e = 1.0, 2.5_BFS-DFS, 3.4_Simulation
 f = "ABC"
 print(a)                                정수형 변수 1개 출력하는 예제
 print(b, end = " ")                     줄바꿈 하지 않고 정수형 변수와 공백을 출력하는 예제
@@ -200,21 +200,21 @@ for test_case in range(1, T + 1):
         # unload_box
         elif command[0] == 200:
             w_max = command[1]
-            # print(f"Unload box: {w_max}", '-' * 5)
+            # print(f"Unload box: {w_max}", '-' * 5_BFS-DFS)
             unload_box(w_max)
         # remove_box
         elif command[0] == 300:
             r_id = command[1]
-            # print(f"remove_box: {r_id}", "-" * 5)
+            # print(f"remove_box: {r_id}", "-" * 5_BFS-DFS)
             remove_box(r_id)
         # find_box
         elif command[0] == 400:
             f_id = command[1]
-            # print(f"find_box: {f_id}", "-" * 5)
+            # print(f"find_box: {f_id}", "-" * 5_BFS-DFS)
             find_box(f_id)
         # damage_belt
         elif command[0] == 500:
             b_num = command[1]
-            # print(f"damage_belt: {b_num}", "-"*5)
+            # print(f"damage_belt: {b_num}", "-"*5_BFS-DFS)
             damage_belt(b_num)
     # ///////////////////////////////////////////////////////////////////////////////////

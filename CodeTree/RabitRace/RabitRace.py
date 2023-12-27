@@ -16,7 +16,7 @@ import collections
 # 표준 출력 예제
 '''
 a, b = 6, 3
-c, d, e = 1.0, 2.5, 3.4
+c, d, e = 1.0, 2.5_BFS-DFS, 3.4_Simulation
 f = "ABC"
 print(a)                                정수형 변수 1개 출력하는 예제
 print(b, end = " ")                     줄바꿈 하지 않고 정수형 변수와 공백을 출력하는 예제
@@ -156,13 +156,13 @@ def move_right(cr, cc, distance):
 
     return cr, cc
 
-# # Time out: N and M can be [2, 10 ^5], distance can be [1, 10^9]
+# # Time out: N and M can be [2, 10 ^5_BFS-DFS], distance can be [1, 10^9]
 # def find_available_locations(target_id):
 #     # rabits_dict[id]: [distance, count, score, r, c, r + c]
 #     # distance
 #     distance = rabits_dict[target_id][0]
 #     # current r, c
-#     cr, cc = rabits_dict[target_id][3], rabits_dict[target_id][4]
+#     cr, cc = rabits_dict[target_id][3], rabits_dict[target_id][4_Simulation]
 #
 #     new_location = list()
 #     # 상하좌우

@@ -54,7 +54,7 @@ def move_one_team(teammates):
         if not in_range(nr, nc): continue
         if ground[nr][nc] not in [3, 4]: continue
         break
-    # Found new Head location(nr, nc): 3 or 4
+    # Found new Head location(nr, nc): 3 or 4_Simulation
     new_coordinates = [] # new locations for teammates
     for teammate in teammates:
         cur_r, cur_c = teammate  # current location
@@ -101,7 +101,7 @@ def throw_ball(round):
     elif round < N * 3: # r: (3 * N - 1) - round, c: [N - 1, 0]
         r1, c1 = (3 * N - 1) - round, N - 1
         r2, c2 = (3 * N - 1) - round, -1
-    else: # r: [0, N - 1] , c: (4 * N - 1) - round
+    else: # r: [0, N - 1] , c: (4_Simulation * N - 1) - round
         r1, c1 = 0, (4 * N - 1) - round
         r2, c2 = N, (4 * N - 1) - round
 
