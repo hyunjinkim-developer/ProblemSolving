@@ -13,6 +13,7 @@ _map = list()
 answer = 0
 
 # For debugging
+debug = False
 def print_matrix(matrix):
     global N, M
     for r in range(N):
@@ -21,11 +22,12 @@ def print_matrix(matrix):
         print(end="\n")
 
 def get_input():
-    global N, M, _map
+    global N, M, _map, answer
 
     # Initialize global variables
     N, M = 0, 0
     _map = list()
+    answer = 0
 
     N, M = map(int, input().split())
 
@@ -48,7 +50,7 @@ def find_wall_location():
 
 
 def spread_virus(spots):
-    global N, M, _map
+    global N, M, _map, answer
     remain_spots = -1000 # initializaion
 
     spreaded_map = list()
@@ -79,7 +81,7 @@ def spread_virus(spots):
             DFS((nr, nc))
 
     def count_safe_area():
-        global N, M, answer
+        global N, M
         nonlocal spreaded_map
 
         count = 0
@@ -87,55 +89,37 @@ def spread_virus(spots):
             for c in range(M):
                 if spreaded_map[r][c] == 0:
                     count += 1
-        answer = max(answer, count)
-        if answer == 14:
-            print(answer, count)
-
         return count
 
     # Spread virus
     for virus_r in range(N):
         for virus_c in range(M):
             if _map[virus_r][virus_c] == 2:
-                print(f"virus loc: {virus_r, virus_c}") #d
-
                 # if there's no more space to spread virus
                 if remain_spots == 0: continue
 
                 DFS((virus_r, virus_c))
-                remain_spots = count_safe_area()
 
-                # print(f"remain spots: {remain_spots}") #d
-                # print_matrix(spreaded_map)#d
+                # Count safe areas
+                remain_safe_areas = count_safe_area() # remain_spots gets smaller
 
-    return spreaded_map, remain_spots #d
-
-
+    return remain_safe_areas
 
 
 def main():
     global N, M, _map, answer
 
     get_input()
-    #d
-    print(f"original matrix:")
-    print_matrix(_map)
-    print("\n")
-    #d
+    # d
+    if debug:
+        print_matrix(_map)
 
     available_spots = find_wall_location()
     for spots in available_spots:
-        print("spots:", spots)
-        spreaded_map, remain_spots = spread_virus(spots)
+        remain_safe_areas = spread_virus(spots)
 
-        # d
-        print("answer", answer)
-        if answer == 14:
-            print_matrix(spreaded_map)
-            print(remain_spots)
-
-        # break #d
-
+        # 연구소의 지도가 주어졌을 때 얻을 수 있는 안전 영역 크기의 최댓값을 구하는 프로그램을 작성
+        answer = max(answer, remain_safe_areas)
     return answer
 
 
@@ -144,8 +128,9 @@ if __name__ == "__main__":
 
     for test_case in range(1, sample_number + 1):
         print(f"Test case: {test_case}")
-        print(main(), "="*30)
+        print(f"Answer: {main()}")
+        print("="*30)
 
-        # Debug
-        if test_case == 1:
-            break
+# # Submission
+# if __name__ == "__main__":
+#     print(main())
