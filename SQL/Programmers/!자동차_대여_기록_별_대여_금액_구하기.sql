@@ -9,7 +9,6 @@
 -- IFNULL(expression, alternative_value)
 -- returns a specified value if the expression is NULL
 
-
 SELECT
     H.HISTORY_ID
     , FLOOR(C.DAILY_FEE
