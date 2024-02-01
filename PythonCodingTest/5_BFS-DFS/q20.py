@@ -12,10 +12,7 @@ N = 0
 graph = list()
 teachers = list()
 answer = False
-temp = list()
-temp_total = list()
-temp_total_set = set()
-temp_count = 0
+border_set, total_border_set = list(), set()
 
 #debug
 def print_matrix(matrix):
@@ -28,11 +25,13 @@ def print_matrix(matrix):
 
 def get_input():
     global N, graph, teachers, answer
+    global border_set, total_border_set
 
     # Initialization
     N = 0
     graph, teachers = list(), list()
     answer = False
+    border_set, total_border_set = list(), set()
 
     N = int(input())
     for r in range(N):
@@ -43,18 +42,17 @@ def get_input():
 
 def set_barrier(count):
     global N, graph, answer
-    global temp, temp_count, temp_total, temp_total_set
+    global border_set, total_border_set
 
-    # if answer == True:
-    #     return
+    # If already found a way to avoid teachers
+    if answer == True:
+        return
 
     if count == 3:
-        answer = avoid_teachers()
-        temp_count += 1 #d
-        # if answer == True:
-        #     print_matrix(graph) #d
-        temp_total.append(temp) #d
-        temp_total_set.add(tuple(temp)) #d
+        new_border_set = tuple(sorted(border_set))
+        if new_border_set not in total_border_set:
+            answer = avoid_teachers()
+            total_border_set.add(new_border_set)
         return
 
     for r in range(N):
@@ -62,14 +60,13 @@ def set_barrier(count):
             if graph[r][c] == "X":
                 # Set barrier
                 graph[r][c] = "B"
-                temp.append((r, c)) #d
-                print(temp)
                 count += 1
+                border_set.append((r,c))
                 set_barrier(count)
                 # Remove barrier
                 graph[r][c] = "X"
                 count -= 1
-                temp.pop(-1) #d
+                border_set.pop(-1)
 
 def avoid_teachers():
     global N, graph, teachers
@@ -106,26 +103,21 @@ def main():
     get_input()
     set_barrier(0)
 
-    print(temp_count)
-    print(len(temp_total))
-    print(len(temp_total_set))
-    # print(temp_total_set)
-
     if answer == True:
         return "YES"
     else:
         return "NO"
 
-if __name__ == "__main__":
-    test_case_count = int(input())
-    for test_case in range(1, test_case_count + 1):
-        print(f"test case: {test_case}", "="*30)
-        print(main())
-
-        #d
-        if test_case == 1:
-            break
-
-# # For submission
 # if __name__ == "__main__":
-#     print(main())
+#     test_case_count = int(input())
+#     for test_case in range(1, test_case_count + 1):
+#         print(f"test case: {test_case}", "="*30)
+#         print(main())
+#
+#         #debug
+#         if test_case == 1:
+#             break
+
+# For submission
+if __name__ == "__main__":
+    print(main())
