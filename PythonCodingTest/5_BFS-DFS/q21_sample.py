@@ -66,6 +66,3 @@ while True:
 
 # main()
 print(days_borders_opened)
-
-
-
