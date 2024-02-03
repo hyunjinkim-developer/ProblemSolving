@@ -2,6 +2,8 @@
 Problem:
 https://www.testdome.com/questions/python/sorted-search/110599
 less than: < (not containing the number)
+
+Binary Search
 """
 
 """
