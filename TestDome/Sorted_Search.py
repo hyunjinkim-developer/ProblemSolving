@@ -19,7 +19,7 @@ def count_numbers(sorted_list, less_than):
 # Solution 2:
 # Implementation of bisect.bisect_left 
 def count_numbers(sorted_list, less_than):
-  low, high = 0, len(sorted_list)
+  low, high = 0, len(sorted_list) # mid should be calculated at least once
 
 # Handling exceptions of empty sorted_list
 #  if low < 0:
