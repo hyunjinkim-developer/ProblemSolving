@@ -1,4 +1,7 @@
+# Bottom-Up
+# Iteration with Memoization
 # Memoization: save already calculated
+
 d =[0] * 100
 
 d[1] = 1

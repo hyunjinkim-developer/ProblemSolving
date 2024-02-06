@@ -1,3 +1,5 @@
+# Show called function in the recursive manner
+
 d = [0] * 100
 
 def fibo(x):
