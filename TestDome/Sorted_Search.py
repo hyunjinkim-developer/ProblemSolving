@@ -26,8 +26,7 @@ def count_numbers(sorted_list, less_than):
 #    return -1
 
   while low < high:
-    mid = (low + high) // 2
-    print(low, high, "/", mid)
+    mid = (low + high) // 2 
     if sorted_list[mid] < less_than:
       low = mid + 1
     else:
