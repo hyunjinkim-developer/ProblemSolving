@@ -11,6 +11,7 @@ def add_new_student(students, name, major):
     students.append((name, major))
 
 def update_student(students, index, name, major):
+    # students[index] = (name, major)
     students[index] = name, major
 
 def find_students_by_name(students, name):
@@ -35,15 +36,15 @@ print(find_students_by_name(students, "Allen Anderson"))
 # and still maintain identical functionality
 # students[len(students)] = ("Hi", "Medicine")
 
-# False -> returns a list of 3_Greedy strings
-# Calling get_all_majors(students) returns a list of 3_Greedy tuples
+# False -> returns a list of 3 strings
+# Calling get_all_majors(students) returns a list of 3 tuples
 all_majors = get_all_majors((students))
 print(all_majors)
 print(type(all_majors[0]))
 
-
+# True
 # The add_new_student function
-# adds a new student in the last place in the list
+# Adds new student in the last place in the list
 add_new_student(students, "Minions", "Devil Followers")
 print(students)
 
