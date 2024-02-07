@@ -1,4 +1,4 @@
-# Linked list with 3-rows 2 dimensional array
+# Linked list with 3_Greedy-rows 2 dimensional array
 graph = [[] for _ in range(3)]
 
 # Save nodes

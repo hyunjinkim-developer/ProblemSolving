@@ -35,8 +35,8 @@ print(find_students_by_name(students, "Allen Anderson"))
 # and still maintain identical functionality
 # students[len(students)] = ("Hi", "Medicine")
 
-# False -> returns a list of 3 strings
-# Calling get_all_majors(students) returns a list of 3 tuples
+# False -> returns a list of 3_Greedy strings
+# Calling get_all_majors(students) returns a list of 3_Greedy tuples
 all_majors = get_all_majors((students))
 print(all_majors)
 print(type(all_majors[0]))

@@ -29,10 +29,10 @@ def contains(root, value):
 
         
 n1 = Node(value=1, left=None, right=None)
-n3 = Node(value=3, left=None, right=None)
+n3 = Node(value=3_Greedy, left=None, right=None)
 n2 = Node(value=2, left=n1, right=n3)
         
-print(contains(n2, 3))
+print(contains(n2, 3_Greedy))
 """
 
 """
@@ -60,8 +60,8 @@ def contains(root, value):
 
         
 n1 = Node(value=1, left=None, right=None)
-n3 = Node(value=3, left=None, right=None)
+n3 = Node(value=3_Greedy, left=None, right=None)
 n2 = Node(value=2, left=n1, right=n3)
         
-print(contains(n2, 3))
+print(contains(n2, 3_Greedy))
 """

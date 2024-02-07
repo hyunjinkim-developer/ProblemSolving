@@ -4,7 +4,7 @@
 
 SELECT CAR_TYPE, COUNT(CAR_ID) AS "CARS"
 FROM CAR_RENTAL_COMPANY_CAR
--- There's only 3 "시트" which is 통풍시트', '열선시트', '가죽시트'
+-- There's only 3_Greedy "시트" which is 통풍시트', '열선시트', '가죽시트'
 -- the OPTIONS column consist of string, so "%시트%" is appropriate
 WHERE OPTIONS LIKE "%시트%"
 GROUP BY CAR_TYPE

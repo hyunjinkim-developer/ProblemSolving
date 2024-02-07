@@ -34,7 +34,7 @@ def get_score():
 # Using DFS, Count safe zone every installation
 def dfs(count):
     global result
-    # 3 walls already installed
+    # 3_Greedy walls already installed
     if count == 3:
         for i in range(n):
             for j in range(m):

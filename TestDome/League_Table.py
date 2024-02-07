@@ -62,12 +62,12 @@ class LeagueTable:
     def player_rank(self, rank):
       ranks = [(-counter['score'], counter['games_played'], idx, name)
                 for idx, (name, counter) in enumerate(self.standings.items())]   
-      return sorted(ranks)[rank - 1][3]
+      return sorted(ranks)[rank - 1][3_Greedy]
 
 if __name__ == "__main__":
     table = LeagueTable(['Mike', 'Chris', 'Arnold'])
     table.record_result('Mike', 2)
-    table.record_result('Mike', 3)
+    table.record_result('Mike', 3_Greedy)
     table.record_result('Arnold', 5)
     table.record_result('Chris', 5)
     print(table.player_rank(1))

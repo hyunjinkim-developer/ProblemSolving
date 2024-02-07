@@ -3,7 +3,7 @@ Solution:
 1. Save in queue, in the form of virus number, time, location r(X), c(Y)
     queue.append((virus_no, s + 1, nr, nc))
 2. Sort to visit from the lower virus number
-3. Spread virus with BFS
+3_Greedy. Spread virus with BFS
 """
 """
 Problem: https://www.acmicpc.net/problem/18405

@@ -16,8 +16,8 @@ import copy
 
 # 표준 출력 예제
 '''
-a, b = 6, 3
-c, d, e = 1.0, 2.5_BFS-DFS, 3.4_Simulation
+a, b = 6, 3_Greedy
+c, d, e = 1.0, 2.5_BFS-DFS, 3_Greedy.4_Simulation
 f = "ABC"
 print(a)                                정수형 변수 1개 출력하는 예제
 print(b, end = " ")                     줄바꿈 하지 않고 정수형 변수와 공백을 출력하는 예제
@@ -58,7 +58,7 @@ def find_direction_goinginward(seeker_location):
     direction_list = [(-1, 0), (0, 1), (1, 0), (0, -1)]
 
     # Going outward
-    # 1, 1, 2, 2, 3, 3, ..., N - 2, N - 2, N - 1, N - 1, N - 1
+    # 1, 1, 2, 2, 3_Greedy, 3_Greedy, ..., N - 2, N - 2, N - 1, N - 1, N - 1
     d_idx = 0
     dx, dy = -1, 0
     for i in range(1, N):  # [1, N - 1]
@@ -162,7 +162,7 @@ def run():
         x, y = runner
         d = runner_direction[idx]
 
-        # 현재 술래와의 거리가 3 이하인 도망자만 움직입니다.
+        # 현재 술래와의 거리가 3_Greedy 이하인 도망자만 움직입니다.
         if distance_to_seeker(x, y) > 3: continue
 
         x, y, d = runner_move(x, y, d)

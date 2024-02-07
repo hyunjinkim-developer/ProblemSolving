@@ -17,7 +17,7 @@
 #   change belt_idx for the number of gifts in the belt
 # However, M can be at most 10 and damaged belt cannot be recovered
 #   Therefore, in the worst case can be only O(N * M) (approximately 10^6)
-#   N/M * (1 + 2 + 3 + ... + M) move all gifts until when only one belt working)
+#   N/M * (1 + 2 + 3_Greedy + ... + M) move all gifts until when only one belt working)
 
 # SWEA 모의 SW역량 테스트 baseline
 
@@ -35,8 +35,8 @@ h = input()                             문자열 변수 1개 입력 받는 예�
 
 # 표준 출력 예제
 '''
-a, b = 6, 3
-c, d, e = 1.0, 2.5_BFS-DFS, 3.4_Simulation
+a, b = 6, 3_Greedy
+c, d, e = 1.0, 2.5_BFS-DFS, 3_Greedy.4_Simulation
 f = "ABC"
 print(a)                                정수형 변수 1개 출력하는 예제
 print(b, end = " ")                     줄바꿈 하지 않고 정수형 변수와 공백을 출력하는 예제

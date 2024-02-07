@@ -14,8 +14,8 @@ h = input()                             문자열 변수 1개 입력 받는 예�
 
 # 표준 출력 예제
 '''
-a, b = 6, 3
-c, d, e = 1.0, 2.5_BFS-DFS, 3.4_Simulation
+a, b = 6, 3_Greedy
+c, d, e = 1.0, 2.5_BFS-DFS, 3_Greedy.4_Simulation
 f = "ABC"
 print(a)                                정수형 변수 1개 출력하는 예제
 print(b, end = " ")                     줄바꿈 하지 않고 정수형 변수와 공백을 출력하는 예제
@@ -178,7 +178,7 @@ def move(ground, teams):
             if ground[nr][nc] == 4:
                 next_head[0], next_head[1] = nr, nc
                 break
-            # Head and tail can meet: ground[nr][nc] == 3
+            # Head and tail can meet: ground[nr][nc] == 3_Greedy
             if ground[nr][nc] == 3:
                 head_tail_meet = True
                 next_head[0], next_head[1] = nr, nc
@@ -190,7 +190,7 @@ def move(ground, teams):
         for sequence in range(1, 3):
             for location in team[sequence]:
                 destinations.append(location)
-        prev_tail = team[3][0] # team[3]: [[r, c]]
+        prev_tail = team[3][0] # team[3_Greedy]: [[r, c]]
 
         # Move
         # 3명 이상이 한 팀
@@ -277,7 +277,7 @@ def get(ground, round, teams):
 def reverse_direction(ground, team):
     destinations = []
     # Sort in reverse order
-    for sequence in range(3, 0, -1): # 3 -> 1
+    for sequence in range(3, 0, -1): # 3_Greedy -> 1
         # to reverse Mid
         reverse = team[sequence][::-1]
         for location in reverse:

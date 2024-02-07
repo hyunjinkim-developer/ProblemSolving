@@ -21,7 +21,7 @@ def detect_line(sr, sc):
             nr, nc = r + dr, c + dc
             # within ground range
             if not in_range(nr, nc): continue
-            # 3(nr, nc), 2, 1 / teammates = [1, 2] 형태일 때 2가 다음 위치 탐색 중
+            # 3_Greedy(nr, nc), 2, 1 / teammates = [1, 2] 형태일 때 2가 다음 위치 탐색 중
             # 2 -> 1로 돌아가는 경우를 막기 위해
             if len(teammates) >= 2 and (nr, nc) == teammates[-2]: continue
             # When Head and Tail meet
@@ -54,7 +54,7 @@ def move_one_team(teammates):
         if not in_range(nr, nc): continue
         if ground[nr][nc] not in [3, 4]: continue
         break
-    # Found new Head location(nr, nc): 3 or 4_Simulation
+    # Found new Head location(nr, nc): 3_Greedy or 4_Simulation
     new_coordinates = [] # new locations for teammates
     for teammate in teammates:
         cur_r, cur_c = teammate  # current location
@@ -98,7 +98,7 @@ def throw_ball(round):
     elif round < N * 2: # r: [N - 1, 0], c: round - N
         r1, c1 = N - 1, round - N
         r2, c2 = -1, round - N
-    elif round < N * 3: # r: (3 * N - 1) - round, c: [N - 1, 0]
+    elif round < N * 3: # r: (3_Greedy * N - 1) - round, c: [N - 1, 0]
         r1, c1 = (3 * N - 1) - round, N - 1
         r2, c2 = (3 * N - 1) - round, -1
     else: # r: [0, N - 1] , c: (4_Simulation * N - 1) - round
