@@ -1,3 +1,8 @@
+"""
+Time Complexity: O(VM)
+노드의 개수가 V개이고/ find 혹은 union 연산의 개수가 M개인 경우
+"""
+
 # Find set where the element exists
 def find_parent(parent, element):
     # If the element is not root
