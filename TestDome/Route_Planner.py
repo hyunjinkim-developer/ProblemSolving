@@ -30,7 +30,6 @@ def route_exists(from_row, from_column, to_row, to_column, map_matrix):
             if not in_range(nr, nc): continue
             if visited[nr][nc] == False: continue
 
-            print(nr, nc)
             if nr == to_row and nc == to_column:
                 return True
             else:
