@@ -9,7 +9,39 @@ N가지 종류의 화폐가 있다.
 적은 금액부터 큰 금액까지 확인하며 차례대로 만들 수 있는 최소한의 화폐 개수를 찾기
 """
 
-N, M = 0, 0
+def get_input():
+    N, M = map(int, input().split())
+
+    COINS = list()
+    for i in range(N):
+        COINS.append(int(input()))
+
+    return N, M, COINS
+
+def find_min_counts(N, M, COINS):
+    # 화폐 가치는 10,000보다 작거나 같은 자연수
+    dp_table = [10001] * M
+
+    for coin in COINS:
+        for i in range(N):
+            dp_table[i] = min(dp_table[i], dp_table[i - coin] + 1)
+            #d On prgress
+
+
+def main():
+    N, M, COINS = get_input()
+
+    find_min_counts(M, COINS)
+
+if __name__ == "__main__":
+    test_case = int(input())
+    for i in range(test_case):
+        print(main())
+
+
+
+
+"""N, M = 0, 0
 coins = list()
 
 def get_input():
@@ -59,4 +91,4 @@ if __name__ == "__main__":
         #     break
 
         print(f"test case: {test_case}", "="*10)
-        print(main())
+        print(main())"""
