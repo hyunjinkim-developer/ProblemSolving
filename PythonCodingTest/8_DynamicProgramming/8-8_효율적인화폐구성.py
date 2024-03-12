@@ -9,6 +9,8 @@ N가지 종류의 화폐가 있다.
 적은 금액부터 큰 금액까지 확인하며 차례대로 만들 수 있는 최소한의 화폐 개수를 찾기
 """
 
+"""
+# Solution 1
 def get_input():
     N, M = map(int, input().split())
 
@@ -19,76 +21,55 @@ def get_input():
     return N, M, COINS
 
 def find_min_counts(N, M, COINS):
+    # Initialization
     # 화폐 가치는 10,000보다 작거나 같은 자연수
-    dp_table = [10001] * M
+    dp_table = [10001] * (M + 1)
+    dp_table[0] = 0 
 
     for coin in COINS:
-        for i in range(N):
-            dp_table[i] = min(dp_table[i], dp_table[i - coin] + 1)
-            #d On prgress
-
+        for i in range((M + 1) - coin):
+            dp_table[i + coin] = min(dp_table[i + coin], dp_table[i] + 1)
+    return dp_table[M]
 
 def main():
     N, M, COINS = get_input()
 
-    find_min_counts(M, COINS)
+    answer = find_min_counts(N, M, COINS)
+    if answer == 10001:
+        answer = -1
+    return answer
+"""
+
+
+# Solution 2: Sample Solution
+def get_input():
+    N, M = map(int, input().split())
+    COINS = list()
+    for i in range(N):
+        COINS.append(int(input()))
+    return N, M, COINS
+
+# Bottom-up dynamic programming
+def find_min_counts(N, M, COINS):
+    # Initialization
+    dp_table = [10001] * (M + 1)
+    dp_table[0] = 0
+
+    for coin in COINS:
+        for i in range(coin, M + 1):
+            dp_table[i] = min(dp_table[i], dp_table[i - coin] + 1)
+    return dp_table[M]
+def main():
+    N, M, COINS = get_input()
+
+    answer = find_min_counts(N, M, COINS)
+    if answer == 10001:
+        return -1
+    else:
+        return answer
+
 
 if __name__ == "__main__":
     test_case = int(input())
-    for i in range(test_case):
-        print(main())
-
-
-
-
-"""N, M = 0, 0
-coins = list()
-
-def get_input():
-    global N, M, coins
-
-    # Initialization
-    N, M = 0, 0
-    coins = list()
-
-    N, M = map(int, input().split())
-    for _ in range(N):
-        coins.append(int(input()))
-
-
-def DP():
-    global N, M, coins
-
-    # Memoization
-    # Initialize with number bigger than maximum of M  1 ≤ M ≤ 10,000
-    dp_table = [10001 for _ in range(M + 1)]
-    dp_table[0] = 0 # The price of 0 is available with 0 coins
-
-    # Bottom-Up
-    for coin in coins:
-        for i in range(coin, M + 1):
-            dp_table[i] = min(dp_table[i], dp_table[i - coin] + 1)
-    return dp_table
-
-
-def main():
-    global M
-
-    get_input()
-
-    dp_table = DP()
-    if dp_table[M] == 10001:
-        return -1
-    else:
-        return dp_table[M]
-
-
-if __name__ == "__main__":
-    test_case_count = int(input())
-    for test_case in range(1, test_case_count + 1):
-        # #debug
-        # if test_case == 2:
-        #     break
-
-        print(f"test case: {test_case}", "="*10)
-        print(main())"""
+    for i in range(1, test_case + 1):
+        print(f"test case {i}: {main()}")
