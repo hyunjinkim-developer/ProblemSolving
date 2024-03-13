@@ -6,7 +6,7 @@ INF = int(1e9)
 N = 0
 
 def print_list(list_):
-    row = ["INF" if element == 1000000000 else element for element in list_]
+    row = ["INF" if element == INF else element for element in list_]
     print(row)
     print("-"*10)
 
