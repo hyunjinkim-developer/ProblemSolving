@@ -38,7 +38,7 @@ def dijkstra(start_node,graph):
     heapq.heappush(queue, (0, start_node))
     while queue:
         saved_weight, node_with_shortest_path = heapq.heappop(queue)
-        # Node already handled (with the smallest shorest path)
+        # Node already handled (with the shortest path)
         if distance[node_with_shortest_path] < saved_weight: continue
 
         for adj_node, weight_to_adj_node in graph[node_with_shortest_path]:
