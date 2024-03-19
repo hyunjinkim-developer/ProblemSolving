@@ -1,3 +1,4 @@
+"""
 # Solution 1:
 def get_input():
     N = input()
@@ -23,6 +24,30 @@ def find_luckystraight(string):
 def main():
     N = get_input()
     find_luckystraight(N)
+"""
+
+# Solution 2: Sample Solution
+def get_input():
+    N = input()
+    return N
+
+def find_luckystraight(string):
+    length = len(string)
+    summary = 0
+
+    for i in range(length // 2):
+        summary += int(string[i])
+    for i in range(length // 2, length):
+        summary -= int(string[i])
+    if summary == 0:
+        print("LUCKY")
+    else:
+        print("READY")
+
+def main():
+    N = get_input()
+    find_luckystraight(N)
+
 
 if __name__ == "__main__":
     T = int(input())
