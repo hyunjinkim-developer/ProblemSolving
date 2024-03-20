@@ -1,13 +1,3 @@
-"""
-nonlocal VS global:
-reference: https://stackoverflow.com/a/71878951
-nonlocal:
-    already bound in the enclosing namespace
-    (otherwise an syntaxError will be raised)
-global:
-    does not require the variable is pre-bound
-    (it will create a new binding in the global namespace if the variable is not pre-bound)
-"""
 
 
 def main():
@@ -33,7 +23,7 @@ def main():
         if direction == -1:
             direction = 3
 
-    # Start simulation
+
     count = 1
     turn_time = 0
     while True:
