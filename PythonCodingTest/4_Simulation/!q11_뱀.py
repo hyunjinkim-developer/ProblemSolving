@@ -1,3 +1,7 @@
+"""
+Problem: https://www.acmicpc.net/problem/3190
+"""
+
 # """
 # Solution 1:
 from collections import deque
