@@ -1,3 +1,8 @@
+"""
+# Solution 1:
+# Save location of each runner in dictionary to acces in O(1)
+
+
 answer = 0
 N = 4
 graph = [
@@ -198,4 +203,197 @@ for test_case in range(1, T + 1):
     #     main()
     # else:
     #     get_input()
+    # ///////////////////////////////////////////////////////////////////////////////////
+"""
+
+
+
+
+
+
+# Solution 2:
+# Using only 2-dimensional array,
+# whose row(x) and column(y) represents each runner's location
+#   Saved data represents (each runner's index, direction(d))
+# Use dictionary to access user's location in O(1)
+# Time consuming bug:
+#   Be careful with the iterator name! Should be different from other variables
+
+# Global variables
+max_score = 0
+
+N = 4
+graph = [
+    [(0, 0) for _ in range(N)]
+    for _ in range(N)
+]
+
+SEEKER = (-2, -2)
+VACANT = (-1, -1)
+
+# 문제에서 주어진 순서대로
+# 방향을 정의합니다.
+# ↑, ↖, ←, ↙, ↓, ↘, →, ↗
+dxs = [-1, -1, 0, 1, 1, 1, 0, -1]
+dys = [0, -1, -1, -1, 0, 1, 1, 1]
+
+
+#debug
+d_to_direction = {0: (-1, 0),
+                      1: (-1, -1),
+                      2: (0, -1),
+                      3: (1, -1),
+                      4: (1, 0),
+                      5: (1, 1),
+                      6: (0, 1),
+                      7: (-1, 1)}
+def print_matrix(matrix):
+    global VACANT, SEEKER, d_to_direction
+
+    for x in range(4):
+        for y in range(4):
+            if (matrix[x][y] == VACANT) or (matrix[x][y] == SEEKER):
+                print(matrix[x][y], end='\t')
+            else:
+                idx, d = matrix[x][y]
+                dir = d_to_direction[d]
+                print(idx, dir, end='\t')
+        print()
+
+
+
+def get_input():
+    global max_score, N, graph
+
+    # Initiization
+    max_score = 0
+    graph = [
+        [(0, 0) for _ in range(N)]
+        for _ in range(N)
+    ]
+
+    for x in range(N):
+        given_row = list(map(int, input().split()))
+        for i in range(N):
+            runner_idx, dir = given_row[i * 2], given_row[i * 2 + 1]
+            y = i
+            graph[x][y] = (runner_idx, dir - 1) # dir - 1: to use modulo operation
+
+
+def in_range(x, y):
+    global N
+    return 0 <= x < N and 0 <= y < N
+def move_runner(target_runner_idx):
+    global N, graph, SEEKER
+
+    def find_next_move(x, y, d):
+        def runner_can_move(x, y):
+            return in_range(x, y) and graph[x][y] != SEEKER
+
+        # 45'씩 8번 회전해보면서 최초로 이동 가능한 곳으로 움직입니다.
+        for rotate_count in range(8):
+            new_d_idx = (d + rotate_count) % 8
+            next_x, next_y = x + dxs[new_d_idx], y + dys[new_d_idx]
+            if runner_can_move(next_x, next_y):
+                return (next_x, next_y, new_d_idx)
+
+    def swap(x, y, nx, ny):
+        graph[x][y], graph[nx][ny] = graph[nx][ny], graph[x][y]
+
+    for x in range(N):
+        for y in range(N):
+            runner_idx, d = graph[x][y]
+            if target_runner_idx == runner_idx:
+                # Find direction to move
+                nx, ny, nd = find_next_move(x, y, d)
+                graph[x][y] = (target_runner_idx, nd)
+                swap(x, y, nx, ny)
+                return
+
+def move_all_runners():
+    global N
+
+    for i in range(1, N * N + 1):
+        move_runner(i)
+
+
+# 현재 술래말의 위치가 (x, y),
+# 바라보고 있는 방향이 d이고
+# 지금까지 얻은 점수가 score일때
+# DFS방식으로 최고 점수를 찾는 함수
+def search_max_score(x, y, d, score):
+    global max_score, N, graph, VACANT, SEEKER
+
+    def seeker_can_move(x, y):
+        return in_range(x, y) and graph[x][y] != VACANT
+
+    def done(x, y, d):
+        for dist in range(1, N + 1):
+            nx, ny = x + dxs[d] * dist, y + dys[d] * dist
+            if seeker_can_move(nx, ny):
+                return False
+        return True
+
+    # Base case for recursive function
+    if done(x, y, d):
+        max_score = max(max_score, score)
+        return
+
+    for dist in range(1, N + 1):
+        nx, ny = x + dxs[d] * dist, y + dys[d] * dist
+        if not seeker_can_move(nx, ny): continue
+
+        # Save data to recover for depth first search
+        recovery_data = [
+            [graph[x][y] for y in range(N)]
+            for x in range(N)
+        ]
+
+        # The seeker catch a runner
+        extra_score, next_dir = graph[nx][ny]
+        graph[nx][ny], graph[x][y] = SEEKER, VACANT
+
+        # Run next round
+        move_all_runners()
+        search_max_score(nx, ny, next_dir, score + extra_score)
+
+        # Recover the data
+        for i in range(N):
+            for j in range(N):
+                # Update graph
+                graph[i][j] = recovery_data[i][j]
+
+
+
+
+def main():
+    global graph, SEEKER, max_score
+
+    get_input()
+
+    # 1) Seeker move to (0, 0)
+    init_score, init_dir = graph[0][0]
+    graph[0][0] = SEEKER
+    # 2) Move all runners for the first time
+    move_all_runners()
+
+    # Depth first search to find max score
+    search_max_score(0, 0, init_dir, init_score)
+    print(max_score)
+
+
+# Comment below before submission
+import sys
+sys.stdin = open("input.txt", "r")
+
+# test case answer
+# 21
+# 1
+# 45
+
+T = int(input())
+# 여러개의 테스트 케이스가 주어지므로, 각각을 처리합니다.
+for test_case in range(1, T + 1):
+    # ///////////////////////////////////////////////////////////////////////////////////
+    main()
     # ///////////////////////////////////////////////////////////////////////////////////
