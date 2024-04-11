@@ -6,7 +6,7 @@ graph = [
 ]
 SEEKER = (-2, -2)
 VACANT = (-1, -1)
-runner_location = dict()
+runner_location = dict() # Acces runner's location in O(1)
 # 방향 d는 1부터 순서대로 ↑, ↖, ←, ↙, ↓, ↘, →, ↗ 를 의미
 d_to_direction = {0: (-1, 0),
                  1: (-1, -1),
@@ -16,32 +16,24 @@ d_to_direction = {0: (-1, 0),
                  5: (1, 1),
                  6: (0, 1),
                  7: (-1, 1)}
-direction_to_d = {(-1, 0): 0,
-                  (-1, -1): 1,
-                  (0, -1): 2,
-                  (1, -1): 3,
-                  (1, 0): 4,
-                  (1, 1): 5,
-                  (0, 1): 6,
-                  (-1, 1): 7}
 
-#debug
-def print_matrix(matrix):
-    global VACANT, SEEKER
-    for x in range(4):
-        for y in range(4):
-            if (matrix[x][y] == VACANT) or (matrix[x][y] == SEEKER):
-                print(matrix[x][y], end='\t')
-            else:
-                idx, d = matrix[x][y]
-                dir = d_to_direction[d]
-                print(idx, dir, end='\t')
-        print()
-
-def print_dict(dictionary):
-    global N
-    for i in range(1, len(dictionary) + 1):
-        print(i, dictionary[i])
+# #debug
+# def print_matrix(matrix):
+#     global VACANT, SEEKER
+#     for x in range(4):
+#         for y in range(4):
+#             if (matrix[x][y] == VACANT) or (matrix[x][y] == SEEKER):
+#                 print(matrix[x][y], end='\t')
+#             else:
+#                 idx, d = matrix[x][y]
+#                 dir = d_to_direction[d]
+#                 print(idx, dir, end='\t')
+#         print()
+#
+# def print_dict(dictionary):
+#     global N
+#     for i in range(1, len(dictionary) + 1):
+#         print(i, dictionary[i])
 
 def get_input():
     global answer, N, graph, runner_location
@@ -67,7 +59,7 @@ def in_range(x, y):
     return 0 <= x < 4 and 0 <= y < 4
 
 def move_runner(runner_idx):
-    global runner_location, runner_location, direction_to_d, d_to_direction, SEEKER, VACANT
+    global runner_location, d_to_direction, SEEKER, VACANT
 
     runner_x, runner_y = runner_location[runner_idx]
     _, d_idx = graph[runner_x][runner_y]
@@ -88,70 +80,79 @@ def move_runner(runner_idx):
             swapped_runner_idx, _ = graph[nx][ny]
             runner_location[swapped_runner_idx] = (runner_x, runner_y)
         runner_location[runner_idx] = (nx, ny)
+
+        graph[runner_x][runner_y] = (runner_idx, d) # Change current runner's direction
         graph[runner_x][runner_y], graph[nx][ny] = graph[nx][ny], graph[runner_x][runner_y]
         break
 
-
 def runner_turn():
-    global N, graph, runner_location
+    global N, graph, runner_location, SEEKER
 
     def runner_can_move(x, y):
         return in_range(x, y) and graph[x][y] != SEEKER
 
-
     # 도둑말은 번호가 작은 순서대로 본인이 가지고 있는 이동 방향대로 이동
     for runner_idx in range(1, N * N + 1):
         # caught runner
+        if runner_location[runner_idx] == -1: continue
+
         move_runner(runner_idx)
 
 
-def search_max_score(seeker_x, seeker_y, seeker_dx, seeker_dy, score):
-    global answer, graph
+def search_max_score(seeker_x, seeker_y, d, score):
+    global answer, N, graph, runner_location, d_to_direction
+    seeker_dx, seeker_dy = d_to_direction[d]
 
     def seeker_can_move(x, y):
-        return in_range(x, y) and graph[x][y] != 0
+        return in_range(x, y) and graph[x][y] != (-1, -1) # Seeker cannot move to vacant space
 
-    def done_traversal(seeker_x, seeker_y, seeker_dx, seeker_dy, score):
+    def done_traversal(seeker_x, seeker_y, seeker_dx, seeker_dy):
         # 현재 위치에도 한 곳이라도 갈 수 있는지 확인합니다.
         # 존재한다면, 아직 게임은 끝나지 않았습니다.
-        for distance in range(1, 17):
+        for distance in range(1, N + 1):
             nx, ny = seeker_x + distance * seeker_dx, seeker_y + distance * seeker_dy
             if seeker_can_move(nx, ny):
                 return False
         return True
 
-    if done_traversal(seeker_x, seeker_y, seeker_dx, seeker_dy, score):
+    if done_traversal(seeker_x, seeker_y, seeker_dx, seeker_dy):
         answer = max(answer, score)
         return
 
     # 현재 턴에 움직일 수 있는 곳을 전부 탐색합니다.
-    for distance in range(1, 17):
+    for distance in range(1, N + 1):
         nx, ny = seeker_x + distance * seeker_dx, seeker_y + distance * seeker_dy
         if not seeker_can_move(nx, ny): continue
 
         # 더 탐색을 진행한 이후, 초기 상태로 다시 만들기 위해
         # save_data 배열에 현재 board 상태를 저장해놓습니다.
         save_data = [
-            [graph[x][y] for x in range(4)]
-            for y in range(4)
+            [graph[x][y] for y in range(N)]
+            for x in range(N)
         ]
 
         # 해당 위치의 도둑말을 잡고
-        extra_score, d = graph[nx][ny]
+        extra_score, next_dir = graph[nx][ny]
+        runner_location[extra_score] = -1
         graph[nx][ny], graph[seeker_x][seeker_y] = SEEKER, VACANT
         # 모든 도둑말을 움직입니다.
         runner_turn()
         # 그 다음 탐색을 진행합니다.
-        search_max_score(nx, ny, seeker_dx, seeker_dy, score + extra_score)
+        search_max_score(nx, ny, next_dir, score + extra_score)
 
-        # 선택한 위치에서의 최대 score 계산 후, board를 원래 상태로 복원
-        for i in range(4):
-            for j in range(4):
+        # 선택한 위치에서의 최대 score 계산 후, graph, runner_location를 원래 상태로 복원
+        for i in range(N):
+            for j in range(N):
                 graph[i][j] = save_data[i][j]
+        for x in range(N):
+            for y in range(N):
+                runner_idx, d = graph[x][y]
+                if (runner_idx, d) != SEEKER and (runner_idx, d) != VACANT:
+                    runner_location[runner_idx] = (x, y)
 
 
 def main():
-    global answer, graph
+    global answer, graph, runner_location
 
     get_input()
 
@@ -159,12 +160,11 @@ def main():
     init_score, init_dir = graph[0][0]
     answer += init_score
     graph[0][0] = SEEKER
-
-    print_matrix(graph) #d
+    runner_location[init_score] = -1
 
     runner_turn()
     # 술래말이 이동할 수 있는 곳에 도둑말이 더이상 존재하지 않으면 게임을 끝냅니다
-    search_max_score(0, 0, *d_to_direction[init_dir], answer)
+    search_max_score(0, 0, init_dir, answer)
     print(answer)
 '''
       아래의 구문은 input.txt 를 read only 형식으로 연 후,
@@ -190,12 +190,12 @@ T = int(input())
 # 여러개의 테스트 케이스가 주어지므로, 각각을 처리합니다.
 for test_case in range(1, T + 1):
     # ///////////////////////////////////////////////////////////////////////////////////
-    # main()
+    main()
 
     # # debug
     # print(f"Test case: {test_case}", "="*30)
-    if test_case == 3:
-        main()
-    else:
-        get_input()
+    # if test_case == 3:
+    #     main()
+    # else:
+    #     get_input()
     # ///////////////////////////////////////////////////////////////////////////////////
