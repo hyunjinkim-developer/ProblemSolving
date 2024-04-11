@@ -212,11 +212,13 @@ for test_case in range(1, T + 1):
 
 
 # Solution 2:
-# Using only 2-dimensional array,
-# whose row(x) and column(y) represents each runner's location
-#   Saved data represents (each runner's index, direction(d))
-# Use dictionary to access user's location in O(1)
-# Time consuming bug:
+# * Using only 2-dimensional array,
+#   whose row(x) and column(y) represents each runner's location
+# * Saved data represents O(N^2) to find the location of the runner (iterate over all graph to find the target runner
+#   This method is inefficient in the sense of time complexity (O((N - 1) ^ (N^4))
+#   However, use less memory and execution
+#   for handling dictionary that save key, value pairs of runner index, each runner's location
+# * Time consuming bug:
 #   Be careful with the iterator name! Should be different from other variables
 
 # Global variables
