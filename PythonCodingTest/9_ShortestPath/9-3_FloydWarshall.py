@@ -24,19 +24,23 @@ def run_floyd_warshall(graph):
         for a in range(1, N + 1):
             for b in range(1, N + 1):
                 graph[a][b] = min(graph[a][b], graph[a][k] + graph[k][b])
-
-    for a in range(1, N + 1):
-        for b in range(1, N + 1):
-            if graph[a][b] == INF:
-                print("INFINITY", end='\t')
-            else:
-                print(graph[a][b], end='\t')
-        print()
     return graph
+
+# Comment below before submission
+import sys
+sys.stdin = open("9-3.txt", "r")
 
 def main():
     graph = get_input()
     graph = run_floyd_warshall(graph)
+
+    for r in range(1, N + 1):
+        for c in range(1, N + 1):
+            if graph[r][c] == INF:
+                print("INFINITY", end='\t')
+            else:
+                print(graph[r][c], end='\t')
+        print()
 
 if __name__ == "__main__":
     main()

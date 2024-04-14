@@ -57,7 +57,7 @@ def main():
     global N
 
     start_node, graph = get_input()
-    distance = dijkstra(start_node,graph)
+    distance = dijkstra(start_node, graph)
     for i in range(1, N + 1):
         if distance[i] == INF:
             print("INFINITY")
