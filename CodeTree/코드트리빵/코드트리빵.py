@@ -208,8 +208,13 @@ for test_case in range(1, T + 1):
 # Solution 2: Sample Solution
 # #1 격자에 있는 사람들에 한하여 다음 움직일 위치
 #     사람 위치를 기준으로 편의점 위치까지 상좌우하 우선순위대로 최단 거리 구하기
+#     bfs_from_person(): "특정 두 점 사이"의 최단 거리
+#                         시작 지점에서 이동 가능한 모든 점까지 BFS하되, 도착 지점에서만 최단 거리 값 update
+#                         ((nr, nc), new_dist)의 형태로 queue에 데이터 저장
 # #3 편의점으로부터 가장 가까운 베이스 캠프 고르기
 #     편의점 위치를 시작으로 최단 거리 구하기
+#     bfs_from_store(): 한 점에서 "matrix 위의 모든 이동가능한 점"까지의 최단 거리
+#                       최단 거리 값은 2-dimensional array에 저장하고, (nr, nc)형태로 queue에 데이터 저장
 
 from collections import deque
 
@@ -264,7 +269,7 @@ def in_range(r, c):
 
 def bfs_from_person(person, store):
     global drs, dcs, grid, INT_MAX, DEFAULT
-    min_distane = INT_MAX
+    min_distance = INT_MAX
 
     visited = [[False] * N for _ in range(N)]
 
@@ -274,8 +279,8 @@ def bfs_from_person(person, store):
     visited[pr][pc] = True
     while q:
         (r, c), dist = q.popleft()
-        if (r, c) == store and dist < min_distane:
-            min_distane = dist
+        if (r, c) == store and dist < min_distance:
+            min_distance = dist
 
         for dr, dc in zip(drs, dcs):
             nr, nc = r + dr, c + dc
@@ -286,7 +291,7 @@ def bfs_from_person(person, store):
             visited[nr][nc] = True
             new_dist = dist + 1
             q.append(((nr, nc), new_dist))
-    return min_distane
+    return min_distance
 
 # start_pos를 시작으로 하는 BFS를 진행합니다.
 # 시작점으로부터의 최단거리 결과는 distance배열에 기록됩니다.
