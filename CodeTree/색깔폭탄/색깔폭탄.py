@@ -112,7 +112,7 @@ def find_bomb_group_priority(r, c):
 
 
     # 기준점이란,
-    # 해당 폭탄 묶음을 이루고 있는 폭탄들 중 빨간색이 아니면서
+    # 해당 폭탄 묶음을 이루고 있는 폭탄들 중 "빨간색이 아니면서"
     # 행이 가장 큰 칸을 의미하며,
     # 만약 행이 가장 큰 폭탄이 여러 개라면 그 중 열이 가장 작은 칸을 의미합니다.
     def custom_sort(element):
@@ -143,9 +143,9 @@ def find_target_bomb_group():
 
     for r in range(N):
         for c in range(N):
-            # 기준점이란, 해당 폭탄 묶음을 이루고 있는 폭탄들 중 빨간색이 아니면서 행이 가장 큰 칸을 의미
             if 1 <= land[r][c]:
                 bomb_group, priority = find_bomb_group_priority(r, c)
+                # Python은 tuple의 각 원소 간에 값 비교 가능
                 if target_priority < priority:
                     target_priority = priority
                     target_bomb_group = bomb_group
