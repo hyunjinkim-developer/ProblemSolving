@@ -1,0 +1,81 @@
+1. The strength of "weak" models
+00:00 - 00:22
+Hello learners! Welcome to the second chapter of our course! In this chapter, you'll learn about a popular and widely used ensemble method: Bagging. In this first lesson, we'll see what a "weak" model is and how to identify one by its properties.
+2. "Weak" model
+00:22 - 01:15
+Voting and averaging, which you learned about in the previous chapter, work by combining the predictions of already trained models. Usually, these use a small number of estimators that are fine-tuned and individually optimized for the problem. In fact, these estimators are so well trained that, in some cases, they produce decent results on their own. We'll refer to these estimators as fine-tuned. This approach is appropriate when you already have optimized models and want to improve performance further by combining them. But what happens when you don't have these estimators trained beforehand? Well, that's when "weak" estimators come into play.
+3. Fine-tuned vs "weak" models
+01:15 - 01:38
+You may ask yourself: what's the difference between a weak and a fine-tuned model? First, let's see what a "weak" model is. The idea of "weak" doesn't mean that it is a bad model, just that it is not as strong as a highly optimized, fine-tuned model.
+4. Properties of "weak" models
+01:38 - 02:39
+A weak estimator, or model, is one which is just slightly better than random guessing. Therefore, the error rate is less than 50% but close to it. A weak model should be light in terms of space and computational requirements, and fast during training and evaluation. One good example is a decision tree. Imagine that we fit a decision tree to the data, but instead of optimizing it completely, we limit it to a depth of two. This restricts the model to learn as much as possible, but makes sure that it has the three desired properties: low performance (just above random guessing), it is light (we only need two levels of decision), and therefore, it is also fast for predictions.
+5. Examples of "weak" models
+02:39 - 03:58
+These are some common examples of weak models. As we stated before, a decision tree constrained with small depth could be used as a weak model. Another example is logistic regression, which makes the assumption that the classes are linearly separable. This is not always true, in which case, logistic regression would be wrong, but potentially still useful as a weak estimator. We could also limit the number of iterations for training, or specify a high value of the parameter C to use a weak regularization. For regression problems, we have linear regression. Linear regression, like logistic regression, makes the assumption that the output is a linear function of the input features. In addition, it relies on the independence of these features. Because of the simple assumptions of the model, we can use it as a weak estimator. As we are more interested in the properties of a weak model, any other estimator which has the three desired properties can be used as well.
+6. Let's practice!
+03:58 - 04:04
+Now, let's get some practice with weak models!
+
+
+
+1. Bootstrap aggregating
+00:00 - 00:12
+Having learned about weak models, you're now ready to learn about Bootstrap Aggregating, also know as "Bagging".
+2. Heterogeneous vs Homogeneous Ensembles
+00:12 - 01:27
+Until now, you've only seen heterogeneous ensemble methods, which use different types of fine-tuned algorithms. Therefore, they tend to work well with a small number of estimators. For example, we could combine a decision tree, a logistic regression, and a support vector machine using voting to improve the results. Here are included Voting, Averaging, and Stacking. Homogeneous ensemble methods such as bagging, on the other hand, work by applying the same algorithm on all the estimators, and this algorithm must be a "weak" model. In practice, we end up working with a large number of "weak" estimators in order to have better performance than that of a single model. Bagging and Boosting are some of the most popular of this kind.
+3. Condorcet's Jury Theorem
+01:27 - 02:32
+You might be wondering how it is possible for a large group of "weak" models to be able to achieve good performance? Again, here is the work of the wisdom of the crowd. Do homogeneous ensemble methods also have that potential? Well, that's what Condorcet showed with his theorem, known as "Condorcet's Jury Theorem". The requirements for this theorem are the following: First, all the models must be independent. Secondly, each model performs better than random guessing. And finally, all individual models have similar performance. If these three conditions are met, then adding more models increases the probability of the ensemble to be correct, and makes this probability tend to 1, equivalent to 100%! The second and third requirements can be fulfilled by using the same "weak" model for all the estimators, as then all will have a similar performance and be better than random guessing.
+4. Bootstrapping
+02:32 - 03:38
+To guarantee the first requirement of the theorem, the bagging algorithm trains individual models using a random subsample for each. This is known as bootstrapping, and it guarantees some of the characteristics of a wise crowd. If you recall, a wise crowd needs to be diverse, either through using different algorithms or datasets. Here we're using the same weak model for all the algorithms, but the dataset for each is a different subsample, which provides diversity. Other properties of a wise crowd are independence and no correlation, which are implicit in bootstrapping as the samples are taken separately. After the individual models are trained with their respective samples, they are aggregated using voting or averaging.
+5. Pros and cons of bagging
+03:38 - 04:11
+Why is bagging a useful technique? First, it helps reduce variance, as the sampling is truly random. Bias can also be reduced since we use voting or averaging to combine the models. Because of the high number of estimators used, bagging provides stability and robustness. However, Bagging is computationally expensive in terms of space and time.
+6. It's time to practice!
+04:11 - 04:14
+Let's now get some practice!
+
+
+
+1. BaggingClassifier: nuts and bolts
+00:00 - 00:12
+In this lesson, you'll learn how to use scikit-learn's BaggingClassifier and BaggingRegressor classes to build ensemble models.
+2. Heterogeneous vs Homogeneous Functions
+00:12 - 01:08
+First, let's see a key difference between the ensemble functions from heterogeneous and homogeneous methods. To build a heterogeneous ensemble model, you call the corresponding function with the parameter estimators, which is a list of string - estimator tuples, and some additional parameters. Each of those estimators was already instantiated by you. However, to build a homogeneous ensemble model, instead of a list of estimators, we pass the parameter base_estimator, which is the instantiated "weak" model we have chosen for our ensemble. Then, we pass in the number of estimators we want for our ensemble, and the corresponding additional parameters.
+3. BaggingClassifier
+01:08 - 01:56
+Let's see an example. The first step is to instantiate the base estimator. Here we'll use a Decision Tree and limit it to a max depth of three. Remember that the base estimator needs to be a "weak" model. The next step is to build the Bagging classifier, passing the decision tree as the base estimator, and specifying that we are using five estimators. Then, we can fit the bagging classifier to the training set as with any other scikit-learn model. After that, you can use the bagging ensemble to make predictions on the test set or new data.
+4. BaggingRegressor
+01:56 - 02:28
+To solve regression problems, you can use the BaggingRegressor class. As an example, let's use linear regression as the base estimator. We can then build the BaggingRegressor. This will be a Bagging ensemble of ten estimators, as we are not specifying the number of estimators and the default value is ten. Then, we can train this ensemble model and use it to make predictions as usual.
+5. Out-of-bag score
+02:28 - 04:16
+Let's end this video with a new concept that is useful in bagging ensembles: the out-of-bag score. Recall that in a bagging ensemble, each estimator is trained on a bootstrap sample. Therefore, each of the samples will leave out some of the instances, which are then used to evaluate each estimator, similar to a train-test split. To get the out-of-bag score for each instance, we calculate the predictions using all the estimators for which it was out of the sample. Then, we combine the individual predictions. Finally, we evaluate the desired metric. For classification, the default metric is accuracy, and for regression it's the R squared, also known as the coefficient of determination. Out-of-bag score helps avoid the need for an independent test set. However, it's often lower than the actual performance. To get the out-of-bag score from a Bagging ensemble, we need to set the parameter oob_score to True. After training the model, we can access it using the attribute oob_score_ with an underscore at the end. It's good to compare this to the actual metric - in this case, accuracy. The two values being close is a good indicator of the model's ability to generalize to new data.
+6. Now it's your turn!
+04:16 - 04:22
+Now it's your turn to build Bagging ensemble models using the scikit-learn framework!
+
+
+
+1. Bagging parameters: tips and tricks
+00:00 - 00:11
+Welcome to final lesson of chapter two! Here you'll learn some tips and tricks to improve your bagging ensembles.
+2. Basic parameters for bagging
+00:11 - 00:51
+Let's review some of the parameters of bagging ensemble models you've already seen. One of the most important parameters is base_estimator, the "weak" model which will be built for each sample. The n_estimators parameter specifies the number of estimators to use. This is ten by default, but in practice we'll use more, and the larger the better. Usually between 100 and 500 trees are enough. You also learned how to calculate the out-of-bag score by specifying the parameter oob_score as True.
+3. Additional parameters for bagging
+00:51 - 02:21
+Let's take a look at some additional parameters you can use to further improve your bagging models. First we have max_samples, which specifies the number of instances to draw for each estimator. The default is 1.0, equivalent to 100%. Another important parameter is max_features. This is the number of features to draw randomly for each estimator. It is also 1.0 by default. Using lower values provides more diversity for the individual models and reduces the correlation among them, as each will get a different sample of both features and instances. For classification, the optimal value lies around the square root of the number of features. For regression, the optimal value is usually close to one third of the number of features. There's also the parameter bootstrap, which is a boolean to indicate whether samples are drawn with replacement. The default is True, as that is the nature of Bagging. If passed as True, then it is recommended to use max_samples as 100%. If False, then max_samples should be lower than 100%, because otherwise all the samples would be identical.
+4. Random forest
+02:21 - 04:03
+Random forests, which you may have seen before, are a special case of Bagging where the base estimators are decision trees. If you want to use decision trees as base estimators, it is recommended to use the Random Forest classes instead, as these are specifically designed for trees. The scikit-learn implementation for Random Forests combines the models using Averaging instead of Voting, so there is no need to use an odd number of estimators. These classes are also part of the sklearn dot ensemble module. For classification, we have the RandomForestClassifier. And for regression, there's the RandomForestRegressor. Let's look at some of the most important parameters. First we have the parameters shared with Bagging: n_estimators, max_features, and oob_score. And then we have the tree-specific parameters: the maximum depth, the minimum number of samples required to split a node, the minimum number of samples required in a leaf node, and class weight. Class weight is a useful parameter which allows you to specify the weights for each class using a dictionary. Or we can pass it as the string value "balanced" and the model will use the class distribution to calculate balanced weights. Therefore, random forests are able to deal with imbalanced targets.
+5. Bias-variance tradeoff
+04:03 - 04:32
+Let's remind ourselves of the bias-variance tradeoff. A simple model has low variance, but high bias. Adding more complexity to the model may reduce the bias but increase the variance of predictions. That's why it's important to optimize the parameters of the ensemble models that minimize the total error and find the balance between bias and variance.
+6. Let's practice!
+04:32 - 04:38
+Let's round out chapter 2 now with some interactive exercises!
