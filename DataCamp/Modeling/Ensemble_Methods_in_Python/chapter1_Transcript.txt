@@ -1,0 +1,60 @@
+1. Introduction to ensemble methods
+00:00 - 00:16
+Welcome to the course! My name is Román de las Heras and I'll be guiding you through this course on ensemble methods. Let's begin with an intuitive introduction to what ensemble methods are.
+2. Choosing the best model
+00:16 - 00:56
+When you're building a model, you want to choose the one that performs the best according to some evaluation metric. For instance, consider this example. Here we trained a Decision Tree, a Logistic Regression, and a K-Nearest Neighbors model. If accuracy was our chosen metric, then the Decision Tree would be the best choice, right? The problem of doing this is that we are discarding the other models, which were able to learn different patterns that might have additional useful properties. What can we do about it?
+3. Surveys
+00:56 - 01:59
+Consider another example. When you conduct a survey, you don't accept only one "best" answer. You consider a combined response of all the participants, and use statistics like the mode or the mean to represent the responses. The combined responses will likely lead to a better decision than relying on a single response. The same principle applies to ensemble methods, where we could form a new model by combining the existing ones. The combined model will have better performance than any of the individual models, or at least, be as good as the best individual model. This is ensemble learning, and it is one of the most effective techniques in machine learning. In this course, you'll learn how to ensemble those individual models into a combined, final model.
+4. Prerequisite knowledge
+01:59 - 02:17
+This course assumes that you are proficient in supervised machine learning and are familiar with the scikit-learn framework. If not, I recommend that you go through the DataCamp courses listed on this slide to ensure that you are well prepared to learn about ensemble methods.
+5. Technologies
+02:17 - 03:34
+We'll be working with scikit-learn as our primary machine learning framework, alongside other Python libraries you might already be familiar with: numpy, pandas, and seaborn. In addition, you'll be introduced to a useful Python library for machine learning called mlxtend. As a quick preview of the code you'll learn to write, the main scikit-learn module we'll be using is sklearn dot ensemble. You'll notice how we first import one of the meta estimators. Then, we'll build the individual models, also known as the base estimators, which will serve as input parameters for the combined model. Usually, the meta estimators will receive a list of estimators as one of its parameters plus some additional parameters which are specific to the ensemble method. The best feature of the meta estimator is that it works similarly to the scikit-learn estimators you already know, with the standard methods of fit and predict.
+6. Learners, ensemble!
+03:34 - 03:43
+Let's now jump into some interactive exercises and refresh our knowledge of scikit-learn. Learners, ensemble!
+
+
+
+1. Voting
+00:00 - 00:08
+In this lesson, you are going to learn how to use an ensemble technique known as voting.
+2. Ask the audience
+00:08 - 01:13
+In TV shows like "Who wants to be a Millionaire?", when a contestant doesn't know the right answer, they have the option of asking the audience. The contestant usually ends up choosing the answer most voted for by the audience, hoping it is the correct one. In fact, according to stats from TV studios, the audience predicts the correct answer more than ninety percent of the time! This is thanks to the concept known as "wisdom of the crowds". It refers to the collective intelligence based on a group of individuals instead of a single expert. The aggregated opinion of the crowd can be as good as (and is usually superior to) the answer of any individual, even that of an expert. This is a useful technique commonly applied to problem solving, decision making, innovation, and prediction. We are particularly interested in prediction.
+3. Majority voting
+01:13 - 02:42
+As the name implies, this majority voting technique combines the output of many classifiers using a majority voting approach. In other words, the combined prediction is the mode of the individual predictions. It is recommended to use an odd number of classifiers. For example, if we use four classifiers, the predictions for positive and negative classes could be tied. Therefore, we need at least three classifiers, and when problem constraints allow it, use five or more. There are some characteristics you need in your "crowd" for a voting ensemble to be effective. First, the ensemble needs to be diverse: you can do this by using different algorithms or different datasets. Second, each prediction needs to be independent and uncorrelated from the rest. Third, each model should be able to make its own prediction without relying on the other predictions. Finally, the ensemble model should aggregate individual predictions into a collective one. Keep in mind that Majority Voting is a technique which can only be applied to classification problems.
+4. Voting ensemble using scikit-learn
+02:42 - 04:34
+Building a voting classifier, receiving a list of classifiers, and returning the combined model would be a cumbersome script for us to build. Luckily, scikit-learn already provides this functionality with the VotingClassifier class. The main input - with keyword "estimators" - is a list of (string, estimator) tuples. Each string is a label and each estimator is a sklearn classifier. You do not have to fit the classifiers individually, as the voting classifier will take care of that for us. In this example, we instantiate a 5-nearest neighbors classifier (called clf_knn), a decision tree (called clf_dt), and a logistic regression (called clf_lr). After that, we create a VotingClassifier passing the estimators and their labels in as a list. Here we use the labels "knn" for the 5-nearest neighbors classifier, "dt" for the decision tree, and "lr" for the logistic regression. We use 5 neighbors to avoid multi-modal predictions. The combined model can be fitted to the training data, and then be used to make predictions. Remember that fit is called with X_train and y_train, and predict only with X_test. Then, we can evaluate the performance on the test set, passing y_test and y_pred to the accuracy_score function.
+5. Let's give it a try!
+04:34 - 04:38
+Let's now build our first ensemble models using voting!
+
+
+
+1. Averaging
+00:00 - 00:08
+In this lesson, you'll learn about another popular ensemble method: averaging.
+2. Counting Jelly Beans
+00:08 - 01:19
+Say you're participating in a game of guessing how many jelly beans there are in a jar. The idea is to guess the number of jelly beans and the participant who is closer to the actual receives the full jar or another prize. As you are not allowed to open the jar and count them individually, your best bet is to estimate the amount. But how can we provide a good estimate? The easiest option would be to choose a random reasonable number. A more intelligent approach would be to approximate the volume of the jar. And you could take even more advanced approaches. Did you know that the average of the individual guesses tends to be close to the actual value and can be as good as or better than any of them? It sounds counterintuitive, right? But it's the same principle we saw in the previous lesson: the wisdom of the crowd. The averaging ensemble takes advantage of this principle.
+3. Averaging (Soft Voting)
+01:19 - 02:00
+This ensembling technique is known as averaging, or "soft" voting, and it can be applied to both classification and regression. In this technique, the combined prediction is the mean of the individual predictions. For Regression, we use the predicted values. And for Classification, we use the predicted probabilities. As the mean doesn't have ambiguous cases like the mode, we can use any number of estimators, as long as we have at least two of them.
+4. Averaging ensemble with scikit-learn
+02:00 - 02:59
+To build an averaging classifier, we'll use the same class as before: VotingClassifier. The main difference is that we specify an additional parameter: voting with the value of "soft". The default value is "hard". We can also pass the optional parameter weights, which specifies a weight for each of the estimators. If specified, the combined prediction is a weighted average of the individual ones. Otherwise, the weights are considered uniform. In a similar way, we can build an Averaging regressor. For this purpose, we use the VotingRegressor class from the sklearn dot ensemble module. The first parameter is also the list of string / estimators tuples, but instead of classifiers we use regressors.
+5. scikit-learn example
+02:59 - 03:41
+Let's see an averaging ensemble in action. Here we have a 5-nearest neighbors classifier, a decision tree, and a logistic regression. We create an averaging classifier passing the list of estimators, and the parameter voting as "soft". In addition, assuming that we know that Decision Tree has better individual performance, we give it a higher weight. Ideally, the weights should be tuned while training the model, for example, using grid search cross-validation.
+6. Game of Thrones deaths
+03:41 - 04:11
+For the exercises that follow, you'll be using a dataset consisting of characters from the popular series Game of Thrones. Your target is to predict whether a character is alive or not. For that purpose, you'll use features like age, gender, books in which the character appears, its popularity, and whether or not the character's relatives are alive.
+7. Time to practice!
+04:11 - 04:21
+The TV show may be over, but there are still 2 books to go. It's your turn now to put averaging into practice and predict the deaths of characters from Game of Thrones!
