@@ -1,0 +1,36 @@
+1. AdaBoost
+00:00 - 00:10
+Boosting refers to an ensemble method in which many predictors are trained and each predictor learns from the errors of its predecessor.
+2. Boosting
+00:10 - 00:27
+More formally, in boosting many weak learners are combined to form a strong learner. A weak learner is a model doing slightly better than random guessing. For example, a decision tree with a maximum-depth of one, known as a decision-stump, is a weak learner.
+3. Boosting
+00:27 - 00:42
+In boosting, an ensemble of predictors are trained sequentially and each predictor tries to correct the errors made by its predecessor. The two boosting methods you'll explore in this course are AdaBoost and Gradient Boosting.
+4. Adaboost
+00:42 - 01:09
+AdaBoost stands for Adaptive Boosting. In AdaBoost, each predictor pays more attention to the instances wrongly predicted by its predecessor by constantly changing the weights of training instances. Furthermore, each predictor is assigned a coefficient alpha that weighs its contribution in the ensemble's final prediction. Alpha depends on the predictor's training error.
+5. AdaBoost: Training
+01:09 - 02:00
+As shown in the diagram, there are N predictors in total. First, predictor1 is trained on the initial dataset (X,y), and the training error for predictor1 is determined. This error can then be used to determine alpha1 which is predictor1's coefficient. Alpha1 is then used to determine the weights W(2) of the training instances for predictor2. Notice how the incorrectly predicted instances shown in green acquire higher weights. When the weighted instances are used to train predictor2, this predictor is forced to pay more attention to the incorrectly predicted instances. This process is repeated sequentially, until the N predictors forming the ensemble are trained.
+6. Learning Rate
+02:00 - 02:22
+An important parameter used in training is the learning rate, eta. Eta is a number between 0 and 1; it is used to shrink the coefficient alpha of a trained predictor. It's important to note that there's a trade-off between eta and the number of estimators. A smaller value of eta should be compensated by a greater number of estimators.
+7. AdaBoost: Prediction
+02:22 - 02:59
+Once all the predictors in the ensemble are trained, the label of a new instance can be predicted depending on the nature of the problem. For classification, each predictor predicts the label of the new instance and the ensemble's prediction is obtained by weighted majority voting. For regression, the same procedure is applied and the ensemble's prediction is obtained by performing a weighted average. It's important to note that individual predictors need not to be CARTs. However CARTs are used most of the time in boosting because of their high variance.
+8. AdaBoost Classification in sklearn (Breast Cancer dataset)
+02:59 - 03:21
+Alright, let's fit an AdaBoostClassifier to the breast cancer dataset and evaluate its ROC-AUC score. Note that the dataset is already loaded. After importing AdaBoostClassifier, DecisionTreeClassifier, roc_auc_score, and train_test_split, split the data into 70%-train and 30%-test as shown here.
+9. AdaBoost Classification in sklearn (Breast Cancer dataset)
+03:21 - 04:05
+Now instantiate a DecisionTreeClassifier with the parameter max_depth set to 1. After that, instantiate an AdaBoostClassifier called adb_clf consisting of 100 decision-stumps. This can be done by setting the parameters base_estimator to dt and n_estimators to 100. Then, fit adb_clf to the training set and predict the probability of obtaining the positive class in the test set as shown here. This enables you to evaluate the ROC-AUC score of adb_clf by calling the function roc_auc_score and passing the parameters y_test and y_pred_proba.
+10. AdaBoost Classification in sklearn (Breast Cancer dataset)
+04:05 - 04:15
+Finally, you can print the result which shows that the AdaBoostClassifier achieves a ROC-AUC score of about 0-dot-99.
+11. Let's practice!
+04:15 - 04:18
+Now it's your turn.
+
+
+
