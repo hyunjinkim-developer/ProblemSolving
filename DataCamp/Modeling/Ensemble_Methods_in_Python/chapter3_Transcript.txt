@@ -1,0 +1,78 @@
+1. The effectiveness of gradual learning
+00:00 - 00:21
+Hi machine learner! Welcome to our third chapter! It's time to add another ensemble method to your inventory: Boosting, which is based on a technique known as gradual learning.
+2. Collective vs gradual learning
+00:21 - 01:49
+The ensemble methods you've seen so far are based on an idea known as collective learning - that is, the wisdom of the crowd. The idea is that the combined prediction of individual models is superior to any of the individual predictions on their own. For collective learning to be efficient, the estimators need to be independent and uncorrelated. In addition, all the estimators are learning the same task, for the same goal: to predict the target variable given the features. Because the estimators are independent, these can be trained in parallel to speed up the model building. Gradual learning methods, on the other hand, are based on the principle of iterative learning. In this approach, each subsequent model tries to fix the errors of the previous model. Gradual learning creates dependent estimators, as each model takes advantage of the knowledge from the previous estimator. In iterative learning, each model is learning a different task, but each one contributes to the same goal of accurately predicting the target variable. As gradual learning follows a sequential model building process, models cannot be trained in parallel.
+3. Gradual learning
+01:49 - 02:27
+Intuitively, gradual learning is similar to the way in which we learn. For example, in the exercises of this course, when you try to apply what you've learned in the videos, you receive feedback on whether or not your code is correct. If it is not correct, you learn from the feedback and accordingly modify your code for the next attempt. In this way, you are iteratively learning. In gradual learning, instead of the same model being corrected in every iteration, a new model is built that tries to fix the errors of the previous model.
+4. Fitting to noise
+02:27 - 03:46
+While this learning approach sounds promising, you should remain vigilant. It's possible that some incorrect predictions may be made due to noise in the data, not because those data points are hard to predict. In these cases, you don't want your subsequent estimators to focus on these incorrect predictions. You want to avoid having an estimator which is fitting to noise, which will lead to overfitting. One way to control this is to stop training after the errors of an estimator start to display white noise. White noise is characterized by the following properties: that the errors are uncorrelated with the input features, are unbiased, and have a constant variance. If these properties are not met, then the model can still be improved. Another approach to control this is to use an improvement tolerance. If the difference in performance does not meet that threshold, then the training is stopped.
+5. It's your turn!
+03:46 - 03:50
+It's your turn now to check your understanding on gradual learning!
+
+
+
+1. Adaptive boosting: award winning model
+00:00 - 00:19
+Welcome to the second lesson! Here, you'll learn about a gradual learning ensemble model: adaptive boosting, also known as AdaBoost. This is an award winning model with a high potential to solve complex problems.
+2. Award winning model
+00:19 - 01:00
+AdaBoost is a boosting ensemble method proposed by Yoav Freund and Robert Schapire in 1997. Six years later, with this algorithm they won the Gödel Prize, which is an annual award for leading research papers in theoretical computer science, named in honor of Kurt Gödel, an Austrian mathematician. Besides being the first machine learning algorithm to win this prize, it was also the first practical boosting algorithm. Today, it remains highly used and is well known by machine learning practitioners.
+3. AdaBoost properties
+01:00 - 02:23
+There are two distinctive properties of Adaptive Boosting compared to other Boosting algorithms. First, the instances are drawn using a sample distribution of the training data into each subsequent dataset. This sample distribution makes sure that instances which were harder to predict for the previous estimator have a higher chance to be included in the training set for the next estimator by giving them higher weights. The distribution is initialized to be uniform. Secondly, the estimators are combined through weighted majority voting. The voting weights are based on the estimators training error. Estimators which have shown good performance are rewarded with higher weights for voting. In addition, AdaBoost is guaranteed to improve as the ensemble grows if each estimator has an error rate less than 0.5. In other words, each estimator needs to be a "weak" model. And similar to Bagging, AdaBoost can be used for both Classification and Regression with its two variations.
+4. AdaBoost classifier with scikit-learn
+02:23 - 03:37
+Now let's see how to instantiate an AdaBoost classifier with scikit-learn. Like with other ensembles, you need to import AdaBoostClassifier from the scikit-learn ensemble module. Then, you can instantiate an AdaBoost classifier calling it with the corresponding parameters. The parameter base_estimator works as usual, it's the weak model template for all the estimators. If not specified, the default is a Decision Tree classifier with a max depth of 1, also known as a decision stump. The second parameter is the number of estimators we want to use. By default is 50. If there's a perfect fit, or an estimator with error higher than 50%, no more estimators are built. Other important parameter is learning rate, which represents how much each estimator contributes to the ensemble. This is 1.0 by default. In addition, there is a trade-off between the number of estimators and the learning rate.
+5. AdaBoost regressor with scikit-learn
+03:37 - 04:27
+In a similar way, we can build an AdaBoost regressor. We can also find the AdaBoostRegressor class in the scikit-learn ensemble module. To instantiate an AdaBoost regression model, we need to call it with the same parameters. There's a difference with the parameter base_estimator. If it's not specified, the default will be a Decision Tree regressor with a max depth of 3, opposite to the classifier which had a max depth of 1. In addition, we have the loss parameter, which is the function used to update weights. By default, it is linear, but you can also use the square or exponential loss.
+6. Let's practice!
+04:27 - 04:29
+Time to practice!
+
+
+
+1. Gradient boosting
+00:00 - 00:15
+In this lesson you'll be learning about another popular and powerful gradual learning ensemble method: Gradient Boosting.
+2. Intro to gradient boosting machine
+00:15 - 01:47
+To understand the intuition behind Gradient Boosting Machine consider the following. Suppose that you want to estimate an objective function, let's say y as a function of X. On the first iteration, our initial model is a weak estimator that is fit to the dataset. Let's call it f sub-one of X. Then, on each subsequent iteration, a new model is built and fitted to the residual error from the previous iteration. The error is calculated as y minus f sub-one of X. After each individual estimator is built, the result is a new additive model, which is an improvement on the previous estimate. We repeat this process n times or until the error is small enough such that the difference in performance is negligible. After the algorithm is finished, the result is a final improved additive model. This is a peculiarity of Gradient Boosting, as the individual estimators are not combined through voting or averaging, but by addition. This is because only the first model is fitted to the target variable, and the rest are estimates of the residual errors.
+3. Equivalence to gradient descent
+01:47 - 03:26
+You may be wondering why this method is called Gradient Boosting. Well, that's because it's equivalent to applying gradient descent as the optimization algorithm. To better understand this, we're going to go over a bit of math now, but don't worry if this seems too advanced, as scikit-learn abstracts away all of this. The residuals are defined as y minus F sub-i of X. This represents the error that the model has at iteration i. Gradient Descent, on its side, is an iterative optimization algorithm that attempts to minimize the loss of an estimator. The loss, in this case the square loss, is defined as the square of the residuals divided by two. On every iteration steps are taken in direction of the negative gradient, which points toward the minimum. The gradient is the derivative of the loss with respect to the approximate function. The result is F sub-i of X minus y. This expression looks similar, in fact, it is the opposite of the residuals. From the resulting gradient we can notice the equivalence, that the residuals are equals to the negative gradient. Therefore, we are actually improving the model using Gradient Descent on each iteration.
+4. Gradient boosting classifier
+03:26 - 04:44
+To build a Gradient Boosting classifier, we first import the class from the sklearn ensemble module. This will allow you to instantiate the Gradient Boosting classifier. Unlike with other ensemble methods, here we don't specify the base_estimator, as Gradient Boosting is implemented and optimized with regression trees as the individual estimators. In Classification, the trees are fitted to the class probabilities. The first parameter is n_estimators, which you already know. Here it is 100 by default. Then, we also specify the learning rate, the parameter which you already learned about. It is point 1 by default. In addition, we have the tree-specific parameters: the maximum depth, which is three by default, the minimum number of samples required to split a node, the minimum number of samples required in a leaf node, and the maximum number of features. In Gradient Boosting, it is recommended to use all the features.
+5. Gradient boosting regressor
+04:44 - 05:04
+In a similar way, we can build a Gradient Boosting regressor. This class is also found on the scikit-learn ensemble module. Then to instantiate the Gradient Boosting Regression model, you must call the function with the same parameters as before.
+6. Time to boost!
+05:04 - 05:08
+It's time to boost some models using gradient descent!
+
+
+
+1. Gradient boosting flavors
+00:00 - 00:16
+Welcome to the final lesson of Chapter 3! In this lesson, you'll learn about some variations, or flavors, of the gradient boosting family of algorithms, along with their implementations in Python.
+2. Variations of gradient boosting
+00:16 - 00:41
+We'll start with Extreme Gradient boosting, which is implemented with the XGBoost framework. Then, we'll see the Light Gradient Boosting Machine algorithm, and how to use it with LightGBM. Finally, you'll learn about the newest flavor: Categorical Boosting, or CatBoost.
+3. Extreme gradient boosting (XGBoost)
+00:41 - 01:56
+XGBoost, is a more advanced implementation of the Gradient Boosting algorithm, optimized for distributed computing for both training and prediction phases. While gradient boosting is a sequential ensemble, XGBoost uses parallel processing for training each estimator, thus speeding up the processing. It's described as a scalable, portable, and accurate solution that can work with huge datasets. To build a XGBoost model, we first import the library with the alias xgb. This allows us to call the classes XGBClassifier or XGBRegressor. The parameters are similar to the ones for Gradient Boosting. However, learning_rate and max_depth have no default value, so we must provide them. The API allow us to train the model and predict with it like with any scikit-learn estimator. DataCamp has an entire course dedicated to XGBoost, which you should check out.
+4. Light gradient boosting machine
+01:56 - 03:17
+Let's move on to Light Gradient Boosting, or LightGBM, which is a framework developed by Microsoft. Compared to XGBoost, LightGBM provides faster training and higher efficiency. It is also lighter in terms of space and memory usage. Being a distributed algorithm means it's optimized for parallel and GPU processing. LightGBM is useful when you are dealing with big datasets but have speed or memory constraints. In order to train a LightBoost ensemble model, you must import the lightgbm library and alias it as lgb, which stands for Light Gradient Boosting. Then, you can use the LGBMClassifier or LGBMRegressor depending on your problem. The parameters are similar to the ones for Gradient Boosting, except for max depth which is negative one by default, meaning no limit. Therefore, we must specify its value if a limit is desired. After training the model, you can use the fit and predict methods like with any scikit-learn estimator.
+5. Categorical boosting
+03:17 - 04:37
+Categorical Boosting (or CatBoost) is the most recent Gradient Boosting flavor. It was open sourced by Yandex, a Russian tech company, in April 2017. CatBoost has built-in capacity to handle categorical features, so you don't need to do the preprocessing yourself. It is a fast implementation which can scale to large datasets and run on a GPU if required. CatBoost also provides a user friendly interface that integrates well with scikit-learn. Similar to the other variations, to build a CatBoost estimator, we import catboost and give it the alias cb. This gives us access to CatBoostClassifier and CatBoostRegressor. Here we also have a similar set of parameters, but as you can notice the default values are all None by default. Therefore, we must specify the parameters while instantiating the estimator. CatBoost also provides the fit and predict methods you are familiar with.
+6. It's your turn!
+04:37 - 04:45
+To round out this chapter, let's get some practice with these different gradient boosting frameworks.
