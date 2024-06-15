@@ -1,3 +1,7 @@
+import sys
+sys.stdin = open("t_input.txt", "r")
+
+
 MAX_T = 25
 MAX_N = 4
 DIR_NUM = 8
@@ -133,6 +137,7 @@ def do_kill(best_route):
             monster[t_num][nx][ny][i] = 0
 
         px, py = nx, ny
+    print(f"pacman moved: {px, py}")
 
 
 def move_p():
@@ -150,6 +155,9 @@ def move_p():
                     max_cnt = m_cnt
                     best_route = (i, j, k)
 
+    global px, py
+    print("prev pacman", px, py)
+    print("best route", best_route)
     # 최선의 루트에 따라
     # 실제 죽이는 것을 진행합니다.
     do_kill(best_route)
@@ -163,6 +171,12 @@ def decay_m():
                 dead[i][j][k] = dead[i][j][k + 1]
             dead[i][j][MAX_DECAY] = 0
 
+    for r in range(n):
+        for c in range(n):
+            print(dead[r][c], end=' ')
+        print()
+        print('-' * 10)
+
 
 def add_m():
     # 몬스터가 복제됩니다.
@@ -172,20 +186,27 @@ def add_m():
                 monster[t_num][i][j][k] += monster[t_num - 1][i][j][k]
 
 
-def simulate():
+def simulate(t_num):
     # 매 초마다 기록하기 때문에 굳이 copy를 진행할 필요는 없습니다.
 
     # 각 칸에 있는 몬스터를 이동시킵니다.
     move_m()
+    print("move m")
+    print_list(t_num)
 
     # 팩맨을 이동시킵니다.
+    print("move p")
     move_p()
 
     # 시체들이 썩어갑니다.
+    print("decay")
     decay_m()
 
+
     # 몬스터가 복제됩니다.
+    print("add")
     add_m()
+    print_list(t_num)
 
 
 def count_monster():
@@ -205,9 +226,21 @@ for _ in range(m):
     # 첫 번째 턴의 상태를 기록합니다.
     monster[0][mx - 1][my - 1][mdir - 1] += 1
 
+def print_list(t_num):
+    for r in range(4):
+        for c in range(4):
+            print(monster[t_num][r][c], end=' ')
+        print()
+    print('-' * 10)
+
+
 # t번 시뮬레이션을 진행합니다.
 while t_num <= t:
-    simulate()
+    print(f"t_num: {t_num}")
+
+    simulate(t_num)
     t_num += 1
+
+    print()
 
 print(count_monster())
