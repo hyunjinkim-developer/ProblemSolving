@@ -116,7 +116,6 @@ def monster_move():
 
     def move(r, c, d):
         global m_dirs, dead, pacman
-        nr, nc, nd = -1, -1, -1
 
         # 현재 자신이 가진 방향대로 한 칸 이동
         cur_dr, cur_dc = m_dirs[d]
@@ -139,15 +138,21 @@ def monster_move():
         for c in range(4):
             if len(grid[r][c]) == 0: continue
             for d in grid[r][c]:
+                # 몬스터 이동
                 nr, nc, nd = move(r, c, d)
                 moved_grid[nr][nc].append(nd)
 
-                # if DEBUG:
-                #     print(f"{r, c, d} -> {nr, nc, nd}")
+                if DEBUG:
+                    print(f"{r, c, d} -> {nr, nc, nd}")
     grid = moved_grid
 
     if DEBUG:
         print("monster move:", '*'*10)
+        print("not allowed")
+        print("pacman loc:", pacman)
+        global dead
+        print("dead:", dead)
+
         print_grid(grid)
 
 
@@ -184,9 +189,9 @@ def pacman_move():
             path.pop()
             dead_count -= len(grid[nr][nc])
 
+    visited = [[False] * 4 for _ in range(4)]
     # 팩맨은 알은 먹지 않으며,
     # 움직이기 전에 함께 있었던 몬스터도 먹지 않습니다.
-    visited = [[False] * 4 for _ in range(4)]
     visited[r][c] = True # pacman location
     for idx, (dr, dc) in enumerate(p_dirs): # 상-좌-하-우
         nr, nc = r + dr, c + dc
@@ -202,6 +207,7 @@ def pacman_move():
 
     if DEBUG:
         print("pacman paths: ", "*"*10)
+        print("prev pacman loc:", pacman)
         print_dict(paths)
 
 
@@ -220,6 +226,7 @@ def pacman_move():
         print(max_dead_paths)
 
     # 이동하는 칸(과정)에 있는 몬스터는 모두 먹어치운 뒤, 그 자리에 몬스터의 시체를 남깁니다.
+    # 움직이기 전에 함께 있었던 몬스터도 먹지 않습니다.
     new_r, new_c = r, c
     for d in max_dead_paths:
         dr, dc = p_dirs[d]
@@ -227,7 +234,8 @@ def pacman_move():
         # 그 자리에 몬스터의 시체를 남깁니다.
         dead_count = len(grid[new_r][new_c])
         for _ in range(dead_count):
-            dead[(new_r, new_c)].append(2)
+            # debris of dead monsters last to 2 turn, except this turn
+            dead[(new_r, new_c)].append(3)
         # 이동하는 칸(과정)에 있는 몬스터는 모두 먹어치움
         grid[new_r][new_c] = []
     # 팩맨의 위치 저장
@@ -262,7 +270,6 @@ def destroy():
     for r, c in spots_cleaned:
         dead.pop((r, c))
 
-
     if DEBUG:
         print("destroy dead monsters:", "*"*10)
         print_dict(dead)
@@ -273,12 +280,16 @@ def egg_to_monster():
     # 처음 복제가 된 몬스터의 방향을 지닌 채로 알 형태였던 몬스터가 부화
     global eggs, grid
 
+    if DEBUG:
+        print("egg to monster:", "*"*10)
+        print("eggs:", eggs)
+
+
     while eggs:
         r, c, d = eggs.popleft()
         grid[r][c].append(d)
 
     if DEBUG:
-        print("egg to monster:", "*"*10)
         print_grid(grid)
 
 
@@ -295,10 +306,10 @@ def solution():
     # t개의 턴이 지난 이후 격자에 살아남은 몬스터는 총 몇 마리인지 출력
     global t, answer
 
-    for turn in range(t):
+    for turn in range(1, t + 1):
         if DEBUG:
             print(f"turn: {turn}", "="*20)
-            if turn == 2:
+            if 5 < turn:
                 break
 
         # 몬스터 복제 시도
@@ -334,8 +345,10 @@ def solution():
 # Comment below before submission
 import sys
 sys.stdin = open("input.txt", "r")
-DEBUG = False
 # answer
+# 5
+# 9
+# 36
 # 10
 # 6
 # 8
@@ -346,6 +359,7 @@ T = int(input())
 for test_case in range(1, T + 1):
     # ///////////////////////////////////////////////////////////////////////////////////
     get_input()
+    DEBUG = True
 
     if DEBUG:
         if test_case == 1:
@@ -354,5 +368,5 @@ for test_case in range(1, T + 1):
             print(f"test case: {test_case}", "="*50)
             solution()
 
-    solution()
+    # solution()
     # ///////////////////////////////////////////////////////////////////////////////////
