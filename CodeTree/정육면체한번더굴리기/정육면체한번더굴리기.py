@@ -23,24 +23,223 @@ print(c, d, e)                          실수형 변수 3개 출력하는 예�
 print(f)                                문자열 1개 출력하는 예제
 '''
 
+from collections import deque
+
+total_score = 0
+
+n, m = 0, 0
 board = []
+r, c = 0, 0 # dice location
+dice = dict()
+dice_bottom = -1
+
+dirs = [(-1, 0), (0, 1), (1, 0), (0, -1)] # from up in clockwise
+
+def print_list(board):
+    global n
+
+    for r in range(n):
+        for c in range(n):
+            print(board[r][c], end='\t')
+        print()
+    print('-'*10)
+
 
 def get_input():
-    global board
+    global n, m, board, dice_bottom, dice, total_score
 
     # Initialization
+    total_score = 0
+    n, m = 0, 0
     board = []
+    dice_bottom = 6 # bottom of the dice
+    dice = {"U": 5, "D": 2, "L": 4,"R": 3} # up, down, left, right of the dice
 
     n, m = map(int, input().split())
     for _ in range(n):
         board.append(list(map(int, input().split())))
 
-    if DEBUG:
-        for r in range(m):
-            for c in range(m):
-                print(board[r][c], end='\t')
-            print()
 
+def in_range(r, c):
+    global n
+    return 0 <= r < n and 0 <= c < n
+
+
+def roll_dice(direction):
+    global dice, dice_bottom
+    new_dice_bottom = -1
+
+    # Check movable_direction
+    # if next position is located outside the ground
+    #   move into opposite direction
+    def movable_direction(direction):
+        global r, c
+        if direction == "R":
+            if in_range(r, c + 1):
+                r, c = r, c + 1
+                return "R"
+            else:
+                r, c = r, c - 1
+                return "L"
+        elif direction == "L":
+            if in_range(r, c - 1):
+                r, c = r, c - 1
+                return "L"
+            else:
+                r, c = r, c + 1
+                return "R"
+        elif direction == "U":
+            if in_range(r - 1, c):
+                r, c = r - 1, c
+                return "U"
+            else:
+                r, c = r + 1, c
+                return "D"
+        elif direction == "D":
+            if in_range(r + 1, c):
+                r, c = r + 1, c
+                return "D"
+            else:
+                r, c = r - 1, c
+                return "U"
+    moved_direction = movable_direction(direction)
+    if DEBUG:
+        print(f"moved_direction: {direction}")
+
+    # Roll dice 1 step
+    if moved_direction == "R":
+        new_dice_bottom = dice["R"]
+        dice["R"] = 7 - dice_bottom
+        dice["L"] = dice_bottom
+    elif moved_direction == "L":
+        new_dice_bottom = dice["L"]
+        dice["R"] = dice_bottom
+        dice["L"] = 7 - dice_bottom
+    elif moved_direction == "U":
+        new_dice_bottom = dice["U"]
+        dice["U"] = 7 - dice_bottom
+        dice["D"] = dice_bottom
+    elif moved_direction == "D":
+        new_dice_bottom = dice["D"]
+        dice["U"] = dice_bottom
+        dice["D"] = 7 - dice_bottom
+
+    if DEBUG:
+        print("Roll dice", "*"*10)
+        print(f"location -> {r, c}")
+        print(f"bottom: {dice_bottom} -> {new_dice_bottom}")
+        print(dice)
+
+    # Save dice_bottom after the dice rolled for 1 step
+    dice_bottom = new_dice_bottom
+    return moved_direction
+
+
+def add_score(r, c):
+    # Get score where the dice is on
+    # Find the number of adjacent location with the same score
+    global n, board, dirs
+
+    target_score = board[r][c]
+    count = 1 # Count includes current location
+
+    visited = [[False] * n for _ in range(n)]
+    visited[r][c] = True
+
+    q = deque()
+    q.append((r, c))
+    while q:
+        r, c = q.popleft()
+        for dr, dc in dirs:
+            nr, nc = r + dr, c + dc
+            if not in_range(nr, nc): continue
+            if board[nr][nc] != target_score: continue
+            if visited[nr][nc]: continue
+
+            count += 1
+            visited[nr][nc] = True
+            q.append((nr, nc))
+
+    if DEBUG:
+        print("Add score", "*"*10)
+        print(f"count: {count}")
+        print_list(board)
+    return target_score * count
+
+
+def find_direction(r, c, direction):
+    global board, dice_bottom
+
+    if DEBUG:
+        print(f"Find next direction:", "*"*5)
+        print(f"prev_dir: {direction}/ board: {board[r][c]}/ dice_bottom: {dice_bottom}")
+
+    def find_next_direction(direction, clockwise):
+        direction_list = ["U", "R", "D", "L"]
+        direction_idx = -1
+        for direction_idx, d in enumerate(direction_list):
+            if direction == d:
+                break
+
+        if clockwise:
+            return direction_list[(direction_idx + 1) % 4]
+        else:
+            return direction_list[(direction_idx - 1) % 4]
+
+    board_score = board[r][c]
+    # if board < bottom of the dice
+    #   rotate 90 degree in clockwise
+    if board_score < dice_bottom:
+        return find_next_direction(direction, clockwise=True)
+    # if bottom of the dice < board
+    #   rotate 90 degree in counter-clockwise
+    elif board_score > dice_bottom:
+        return find_next_direction(direction, clockwise=False)
+    # if bottom of the dice == board
+    #   same as previous direction
+    else:
+        return direction
+
+
+def solution():
+    global m, r, c, dice_bottom, total_score
+
+    if DEBUG:
+        global r, c
+        print(f"previous r, c: {r, c}")
+
+
+    # First turn
+    # dice on (0, 0), move to right
+    if DEBUG:
+        print("First turn", "*"*10)
+    r, c = 0, 0
+    direction = roll_dice("R")
+
+    # Add score
+    total_score += add_score(r, c)
+
+    for _ in range(1, m):
+        if DEBUG:
+            print("="*20)
+
+        # Find next direction
+        #   based on comparison between board score and dice bottom
+        next_direction = find_direction(r, c, direction)
+        if DEBUG:
+            print(f"next direction: {next_direction}")
+        # Roll dice in movable direction
+        #   next direction can be different from moved direction
+        #   if the next location is out of board
+        moved_direction = roll_dice(next_direction)
+
+        # Get score
+        total_score += add_score(r, c)
+
+        # Update direction
+        direction = moved_direction
+
+    return total_score
 
 
 '''
@@ -55,14 +254,18 @@ def get_input():
       단, 채점을 위해 코드를 제출하실 때에는 반드시 아래 구문을 지우거나 주석 처리 하셔야 합니다.
 '''
 
-DEBUG = False
+
 
 # Comment below before submission
 import sys
 sys.stdin = open("input.txt", "r")
-DEBUG = True
+
+DEBUG = False # For submission
+# DEBUG = True
 
 # Answer
+# 44
+# 4836
 # 30
 # 40
 
@@ -72,4 +275,15 @@ T = int(input())
 for test_case in range(1, T + 1):
     # ///////////////////////////////////////////////////////////////////////////////////
     get_input()
+
+    if DEBUG:
+        print(f"test case: {test_case}", "="*30)
+        print(solution())
+
+        if test_case == 1:
+            break
+
     # ///////////////////////////////////////////////////////////////////////////////////
+    # Samsung Coding Test style output
+    answer = solution()
+    print("#%d:" % test_case, answer)
