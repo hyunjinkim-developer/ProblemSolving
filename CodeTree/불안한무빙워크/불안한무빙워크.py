@@ -49,7 +49,7 @@ def get_input():
     moving_walkway.extend(deque(map(int, input().split())))
 
     if DEBUG:
-        print("get input:", "="*10)
+        print("get input:", "*"*10)
         print(f"n: {n}, k: {k}")
         print(moving_walkway)
 
@@ -70,7 +70,7 @@ def rotate_moving_walkway():
     new_candidates_location.extend(candidates_location)
     candidates_location = new_candidates_location
     if DEBUG:
-        print("rotate moving walkway:", "="*10)
+        print("rotate moving walkway:", "*"*10)
         print(moving_walkway)
         print("candidates:")
         print(candidates)
@@ -103,7 +103,7 @@ def move_candidate():
         moving_walkway[next_location] -= 1
 
     if DEBUG:
-        print("move candidate:", "="*10)
+        print("move candidate:", "*"*10)
         print("candidates:")
         print(candidates)
         print("locations:")
@@ -124,7 +124,7 @@ def add_candidate():
         moving_walkway[0] -= 1
 
     if DEBUG:
-        print("add candidate:", "="*10)
+        print("add candidate:", "*"*10)
         print("candidates:")
         print(candidates)
         print("locations:")
@@ -142,7 +142,7 @@ def get_off_moving_walkway():
         candidates_location[n - 1] = -1
 
     if DEBUG:
-        print("get off moving walkway:", "="*10)
+        print("get off moving walkway:", "*"*10)
         print("candidates:")
         print(candidates)
         print("locations:")
@@ -162,11 +162,16 @@ def count_reliability():
 
 def solution():
     global k
+    global DEBUG, DEBUG_exp_no
 
     experiment_no = 1
     while True:
         if DEBUG:
             print(f"experiment: {experiment_no}", "="*40)
+            DEBUG_exp_no = 2
+            DEBUG = False
+            if experiment_no == DEBUG_exp_no:
+                DEBUG = True
 
         # 1. 무빙워크가 한 칸 회전합니다.
         rotate_moving_walkway()
@@ -186,9 +191,9 @@ def solution():
         if k <= count:
             break
 
-        # if DEBUG:
-        #     if experiment_no == 4:
-        #         break
+
+        if experiment_no == DEBUG_exp_no:
+            break
 
 
         experiment_no += 1
