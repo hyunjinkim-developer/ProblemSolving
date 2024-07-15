@@ -1,7 +1,10 @@
-# SWEA 모의 SW역량 테스트 baseline
+"""
+# 문제의 Point
+* 문제 잘 읽기!
+    '1~3 과정 중 n번 칸 위치에 사람이 위치하면 그 즉시 내리게 됩니다.'라는 조건을 놓쳐서 불필요한 디버깅 시간을 들여야했다.
+"""
 
-# 기본 제공코드는 임의 수정해도 관계 없습니다. 단, 입출력 포맷 주의
-# 아래 표준 입출력 예제 필요시 참고하세요.
+
 
 # 표준 입력 예제
 '''
@@ -59,9 +62,6 @@ def rotate_moving_walkway():
     # 각 사람은 1번 칸에 올라서서 n번 칸에서 내리게
     global n, moving_walkway, candidates, candidates_location
 
-    # if DEBUG:
-    #     moving_walkway = deque([1, 2, 3, 4, 5, 6])
-
     moving_walkway.rotate(1)
     for key, location in candidates.items():
         candidates[key] = (location + 1) % (n * 2)
@@ -69,6 +69,10 @@ def rotate_moving_walkway():
     new_candidates_location = [last_location]
     new_candidates_location.extend(candidates_location)
     candidates_location = new_candidates_location
+
+    # 1~3 과정 중 n번 칸 위치에 사람이 위치하면 그 즉시 내리게 됩니다.
+    get_off_moving_walkway()
+
     if DEBUG:
         print("rotate moving walkway:", "*"*10)
         print(moving_walkway)
@@ -102,6 +106,10 @@ def move_candidate():
         # 사람이 어떤 칸에 올라가거나 이동하면 그 칸의 안정성은 즉시 1만큼 감소하게 되며
         moving_walkway[next_location] -= 1
 
+        # 1~3 과정 중 n번 칸 위치에 사람이 위치하면 그 즉시 내리게 됩니다.
+        if next_location == n - 1:
+            get_off_moving_walkway()
+
     if DEBUG:
         print("move candidate:", "*"*10)
         print("candidates:")
@@ -134,11 +142,11 @@ def add_candidate():
 
 
 def get_off_moving_walkway():
-    global n, candidates_location
+    global n, candidates_location, moving_walkway
 
-    candidate_to_get_off = candidates_location[n - 1]
-    if candidate_to_get_off != -1:
-        candidates.pop(candidate_to_get_off)
+    candidate_id_to_get_off = candidates_location[n - 1]
+    if candidate_id_to_get_off != -1:
+        candidates.pop(candidate_id_to_get_off)
         candidates_location[n - 1] = -1
 
     if DEBUG:
@@ -162,15 +170,18 @@ def count_reliability():
 
 def solution():
     global k
-    global DEBUG, DEBUG_exp_no
+    global DEBUG
+
+    # Debugging purpose
+    DEBUG_SOL = False
+    DEBUG_exp_no = 25
 
     experiment_no = 1
     while True:
-        if DEBUG:
+        if DEBUG and DEBUG_SOL:
             print(f"experiment: {experiment_no}", "="*40)
-            DEBUG_exp_no = 2
             DEBUG = False
-            if experiment_no == DEBUG_exp_no:
+            if experiment_no <= DEBUG_exp_no:
                 DEBUG = True
 
         # 1. 무빙워크가 한 칸 회전합니다.
@@ -183,21 +194,16 @@ def solution():
         # 3. 1번 칸에 사람이 없고 안정성이 0이 아니라면 사람을 한 명 더 올립니다.
         add_candidate()
 
-        # 1~3 과정 중 n번 칸 위치에 사람이 위치하면 그 즉시 내리게 됩니다.
-        get_off_moving_walkway()
-
         # 안정성이 0인 칸이 k개 이상이라면 과정을 종료합니다. 그렇지 않다면 다시 위의 과정을 반복합니다.
         count = count_reliability()
         if k <= count:
             break
 
-
-        if experiment_no == DEBUG_exp_no:
-            break
-
+        if DEBUG and DEBUG_SOL:
+            if experiment_no == DEBUG_exp_no:
+                break
 
         experiment_no += 1
-
     # 무빙워크가 종료될 때 몇 번째 실험 중이었는지를 출력
     return experiment_no
 
@@ -223,8 +229,8 @@ sys.stdin = open("input.txt", "r")
 # 2
 
 
-DEBUG = True
-# DEBUG = False # For submission
+# DEBUG = True
+DEBUG = False # For submission
 
 
 T = int(input())
@@ -240,5 +246,6 @@ for test_case in range(1, T + 1):
         print(f"test case: {test_case}", "="*30)
         answer = solution()
     # ///////////////////////////////////////////////////////////////////////////////////
-    answer = solution()
+    if not DEBUG:
+        answer = solution()
     print("#%d:" % test_case, answer)
