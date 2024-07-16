@@ -1,5 +1,15 @@
 """
 * 상하좌우 인접한 2-dimensional array에서 같은 값을 갖고 있는 그룹 찾기, 각 그룹을 저장하기
+- 1) 유효한(3개 이상) fragments 찾기
+- 2) fragments 비우기
+    * acquire_remain()로 implement
+        - end condition: 새로운 위치의 remain_no가 주어진(이전 위치의) remain_no와 다른 경우
+        - fragments의 수가 3개 이상인 경우만 저장 acquired_value로 인정됨
+        - fragments를 비워야 하기 때문에 DFS로 Traversal을 하면서 fragments(같은 remain_no를 가진 그룹)의 위치를 저장히고
+            fragments의 수가 3이상인 경우 spot_to_be_emptied로 저장한 뒤
+            empty == True인 경우 한꺼번에 제거
+        - 같은 위치를 다시 방문할 수 없기 때문에 visited로 방문한 위치인지 확인
+
 * 시간이 급박할 때 안전하게 Debugging하는 방법
 * detail! 잘 읽기!
     * 문제를 읽으면서 함수들의 실행 순서, 명세(input, output), 세부 조건을 정리해두면 유용함
@@ -137,12 +147,14 @@ def select_grid():
 
 def rotate_clockwise_90deg(rotated_remains, start_r, start_c):
     # start_r, start_c : upper left corner of the grid
+    # Rotate 3 * 3 grid
     rotated_grid = [[-1] * 3 for _ in range(3)]
     for r in range(3):
         for c in range(3):
             # rotated_grid[c][(N - 1) - r]
             rotated_grid[c][2 - r] = rotated_remains[start_r + r][start_c + c]
 
+    # Update rotated 3 * 3 grid to remains
     for r in range(3):
         for c in range(3):
             rotated_remains[start_r + r][start_c + c] = rotated_grid[r][c]
@@ -154,11 +166,11 @@ def acquire_remain(remains, empty=False):
     # 유물의 가치는 모인 조각의 개수와 같습니다.
     acquired_value = 0
 
-    def dfs(start_r, start_c, remain_no, fragments):
+    def dfs(start_r, start_c, remains_no, fragments):
         global dirs
         nonlocal remains, visited, count, empty
 
-        if remains[start_r][start_c] != remain_no:
+        if remains[start_r][start_c] != remains_no:
             return
 
         visited[start_r][start_c] = True
@@ -174,18 +186,19 @@ def acquire_remain(remains, empty=False):
             nr, nc = start_r + dr, start_c + dc
             if not in_range(nr, nc): continue
             if visited[nr][nc]: continue
-            dfs(nr,nc, remain_no, fragments)
+            dfs(nr,nc, remains_no, fragments)
 
+    # Traverse to find fragments(a group of remains that have the same remains_no
     visited = [[False] * 5 for _ in range(5)]
     spot_to_be_emptied = []
     for r in range(5):
         for c in range(5):
             if visited[r][c]: continue
 
-            remain_no = remains[r][c]
+            remains_no = remains[r][c]
             count = 0
             fragments = []
-            dfs(r, c, remain_no, fragments)
+            dfs(r, c, remains_no, fragments)
             if empty == True:
                 if 3 <= len(fragments):
                     spot_to_be_emptied.extend(fragments)
@@ -278,6 +291,7 @@ def solution():
     for _ in range(K):
         if DEBUG:
             print("="*50)
+
         total_value = explore()
         # 탐사 진행 과정에서 어떠한 방법을 사용하더라도 유물을 획득할 수 없었다면 모든 탐사는 그 즉시 종료
         # 이 경우 얻을 수 있는 유물이 존재하지 않음으로, 종료되는 턴에 아무 값도 출력하지 않음에 유의
