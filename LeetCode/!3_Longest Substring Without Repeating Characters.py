@@ -17,7 +17,26 @@ class Solution:
         # return max_length
 
 
-        # Solution 2:
+        # # Solution 2:
+        # # Handling exceptions: "c", " ", "au"
+        # if (not s.isalpha()) or (len(s) in [1, 2]):
+        #     return len(set(s))
+        #
+        # substring = set()
+        #
+        # for start in range(len(s)):
+        #     for end in range(start + 1, len(s) + 1):
+        #         # if not string with unique characters
+        #         if len(set(s[start: end])) != len(s[start: end]): continue
+        #
+        #         if len(substring) < len(set(s[start: end])):
+        #             substring = s[start: end]
+        #             # print(start, end, s[start :end])
+        #
+        # return len(substring)
+
+
+        # Solution 3:
         # Use two pointers, left and right,
         #   to represent the boundaries of the current substring.
         left, max_length = 0, 0
@@ -36,21 +55,5 @@ class Solution:
         return max_length
 
 
-        # # Solution 3:
-        # # Handling exceptions: "c", " ", "au"
-        # if (not s.isalpha()) or (len(s) in [1, 2]):
-        #     return len(set(s))
-        #
-        # substring = set()
-        #
-        # for start in range(len(s)):
-        #     for end in range(start + 1, len(s) + 1):
-        #         # if not string with unique characters
-        #         if len(set(s[start: end])) != len(s[start: end]): continue
-        #
-        #         if len(substring) < len(set(s[start: end])):
-        #             substring = s[start: end]
-        #             # print(start, end, s[start :end])
-        #
-        # return len(substring)
+
 
