@@ -1,7 +1,13 @@
 # Quick sort
-array = [ 5 , 7 , 9 , 0 , 3 , 1 , 6 , 2 , 4 , 8 ]
+# Time complexity:
+# 	O(N * logN) in average
+# 	O(N ** 2) in worst case (When the array is already sorted)
+
+array = [5, 7, 9, 0, 3, 1, 6, 2, 4, 8]
 
 def quick_sort(array, start, end):
+	# Base case
+	# When the number of elememt in the group is 1
 	if start >= end:
 		return
 
