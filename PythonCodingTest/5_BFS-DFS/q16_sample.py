@@ -106,7 +106,6 @@ def main():
 
             # Count safe area
             answer = max(answer, count_safe_area())
-            # print("!")
             return
 
 
